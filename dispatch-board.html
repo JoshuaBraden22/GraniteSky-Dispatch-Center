@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dispatch Board | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); renderDispatchBoard();">
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="loads.html">Loads</a>
+    <a class="active" href="dispatch-board.html">Dispatch Board</a>
+    <a href="drivers.html">Drivers</a>
+    <a href="trucks.html">Trucks</a>
+    <a href="companies.html">Companies</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="documents.html">Documents</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="messages.html">Messages</a>
+    <a href="accounting.html">Accounting</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Dispatch Board</h1>
+      <p>Track loads by current dispatch status.</p>
+    </div>
+
+    <a href="loads.html" class="btn-primary">+ New Load</a>
+  </div>
+
+  <section class="dispatch-grid">
+
+    <div class="dispatch-column">
+      <h2>Pickup Today</h2>
+      <div id="pickupBoard" class="dispatch-list">
+        <p class="empty-board">No pickup loads.</p>
+      </div>
+    </div>
+
+    <div class="dispatch-column">
+      <h2>In Transit</h2>
+      <div id="transitBoard" class="dispatch-list">
+        <p class="empty-board">No loads in transit.</p>
+      </div>
+    </div>
+
+    <div class="dispatch-column">
+      <h2>Delivered</h2>
+      <div id="deliveredBoard" class="dispatch-list">
+        <p class="empty-board">No delivered loads.</p>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
