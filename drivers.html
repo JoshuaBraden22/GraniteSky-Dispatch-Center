@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drivers | GraniteSky Dispatch Center</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); showUserName(); renderDrivers();">
+
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="GraniteSky Dispatching">
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="loads.html?v=2">Loads</a>
+      <a href="#">Carriers</a>
+      <a class="active" href="drivers.html">Drivers</a>
+      <a href="#">Trucks</a>
+      <a href="#">Documents</a>
+      <a href="#">Invoices</a>
+      <a href="#">Settings</a>
+      <button onclick="logout()">Logout</button>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Driver Management</h1>
+        <p>Add drivers and assign them to loads.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Add New Driver</h2>
+      </div>
+
+      <form id="driverForm" class="form-grid">
+        <input id="driverName" placeholder="Driver Name" required>
+        <input id="driverPhone" placeholder="Phone Number">
+        <input id="driverEmail" placeholder="Email Address">
+        <input id="driverTruck" placeholder="Truck / Unit Number">
+        <input id="driverEquipment" placeholder="Equipment Type">
+        <select id="driverStatus">
+          <option>Available</option>
+          <option>Assigned</option>
+          <option>Off Duty</option>
+        </select>
+
+        <textarea id="driverNotes" placeholder="Driver Notes"></textarea>
+
+        <button class="btn-primary" type="submit">Save Driver</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Current Drivers</h2>
+        <button class="small-btn danger" onclick="clearDrivers()">Clear All</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Driver</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Truck</th>
+              <th>Equipment</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="driversTable">
+            <tr>
+              <td colspan="7">No drivers have been added yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>
