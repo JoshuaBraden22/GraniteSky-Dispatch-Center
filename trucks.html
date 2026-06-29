@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trucks | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); showUserName(); populateTruckDriverDropdown(); renderTrucks();">
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="loads.html">Loads</a>
+    <a href="drivers.html">Drivers</a>
+    <a class="active" href="trucks.html">Trucks</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="documents.html">Documents</a>
+    <a href="invoices.html">Invoices</a>
+    <a href="settings.html">Settings</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Truck Management</h1>
+      <p>Add trucks and assign them to saved drivers.</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Add New Truck</h2>
+    </div>
+
+    <form id="truckForm" class="form-grid">
+      <input id="truckUnit" placeholder="Unit Number" required>
+      <input id="truckVin" placeholder="VIN">
+
+      <input id="truckYear" placeholder="Year">
+      <input id="truckMake" placeholder="Make">
+
+      <input id="truckModel" placeholder="Model">
+      <input id="truckPlate" placeholder="License Plate">
+
+      <input id="truckState" placeholder="Plate State">
+      <input id="trailerNumber" placeholder="Trailer Number">
+
+      <input id="truckEquipment" placeholder="Equipment Type">
+
+      <select id="truckDriver">
+        <option value="">Assign Driver</option>
+      </select>
+
+      <select id="truckStatus">
+        <option>Available</option>
+        <option>Assigned</option>
+        <option>Maintenance</option>
+        <option>Out of Service</option>
+      </select>
+
+      <textarea id="truckNotes" placeholder="Truck notes, maintenance notes, insurance reminders, etc."></textarea>
+
+      <button class="btn-primary" type="submit">Save Truck</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Current Trucks</h2>
+      <button class="small-btn danger" onclick="clearTrucks()">Clear All</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>Truck</th>
+            <th>Plate</th>
+            <th>Trailer</th>
+            <th>Equipment</th>
+            <th>Driver</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="trucksTable">
+          <tr>
+            <td colspan="8">No trucks have been added yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
