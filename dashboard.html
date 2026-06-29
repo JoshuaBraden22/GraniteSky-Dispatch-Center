@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,7 +12,6 @@
 <script defer src="js/auth.js"></script>
 <script defer src="js/layout.js"></script>
 <script defer src="js/dashboard.js"></script>
-
 </head>
 
 <body>
@@ -22,181 +19,115 @@
 <div class="app-shell">
 
 <aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
 
-<div class="sidebar-logo">
-<img src="logo.png" alt="GraniteSky Dispatching">
-</div>
-
-<nav class="sidebar-nav">
-
-<a href="dashboard.html" class="active">Dashboard</a>
-<a href="loads.html">Loads</a>
-<a href="dispatch-board.html">Dispatch Board</a>
-<a href="drivers.html">Drivers</a>
-<a href="trucks.html">Trucks</a>
-<a href="companies.html">Companies</a>
-<a href="carriers.html">Carriers</a>
-<a href="documents.html">Documents</a>
-<a href="calendar.html">Calendar</a>
-<a href="messages.html">Messages</a>
-<a href="accounting.html">Accounting</a>
-
-<button onclick="logout()">Logout</button>
-
-</nav>
-
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="loads.html?v=999">Loads</a>
+    <a href="dispatch-board.html?v=999">Dispatch Board</a>
+    <a href="drivers.html?v=999">Drivers</a>
+    <a href="trucks.html?v=999">Trucks</a>
+    <a href="companies.html?v=999">Companies</a>
+    <a href="carriers.html?v=999">Carriers</a>
+    <a href="documents.html?v=999">Documents</a>
+    <a href="calendar.html?v=999">Calendar</a>
+    <a href="messages.html?v=999">Messages</a>
+    <a href="accounting.html?v=999">Accounting</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
 </aside>
 
 <main class="main-content">
 
-<div class="topbar">
+  <div class="topbar">
+    <div>
+      <h1>Dispatcher Dashboard</h1>
+      <p>Welcome back, <strong id="loggedUser" class="logged-user"></strong></p>
+    </div>
 
-<div>
+    <a href="loads.html?v=999" class="btn-primary">+ New Load</a>
+  </div>
 
-<h1>Dispatcher Dashboard</h1>
+  <section class="stat-grid">
+    <div class="stat-card">
+      <span>Total Revenue</span>
+      <strong id="dashboardRevenue">$0.00</strong>
+    </div>
 
-<p>
-Welcome back,
-<strong id="loggedUser" class="logged-user"></strong>
-</p>
+    <div class="stat-card">
+      <span>Total Loads</span>
+      <strong id="dashboardLoads">0</strong>
+    </div>
 
-</div>
+    <div class="stat-card">
+      <span>Drivers</span>
+      <strong id="dashboardDrivers">0</strong>
+    </div>
 
-<a href="loads.html" class="btn-primary">
-+ New Load
-</a>
+    <div class="stat-card">
+      <span>Delivered</span>
+      <strong id="dashboardDelivered">0</strong>
+    </div>
+  </section>
 
-</div>
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Recent Loads</h2>
+      <a href="loads.html?v=999" class="small-btn">View All</a>
+    </div>
 
-<section class="stat-grid">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Load #</th>
+            <th>Broker</th>
+            <th>Carrier</th>
+            <th>Driver / Truck</th>
+            <th>Revenue</th>
+            <th>Status</th>
+          </tr>
+        </thead>
 
-<div class="stat-card">
-<span>Total Revenue</span>
-<strong id="dashboardRevenue">$0.00</strong>
-</div>
+        <tbody id="dashboardRecentLoads">
+          <tr>
+            <td colspan="6">No loads yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-<div class="stat-card">
-<span>Total Loads</span>
-<strong id="dashboardLoads">0</strong>
-</div>
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Driver Fleet Status</h2>
+      <a href="drivers.html?v=999" class="small-btn">Manage Drivers</a>
+    </div>
 
-<div class="stat-card">
-<span>Drivers</span>
-<strong id="dashboardDrivers">0</strong>
-</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>Assigned Truck</th>
+            <th>Status</th>
+          </tr>
+        </thead>
 
-<div class="stat-card">
-<span>Delivered</span>
-<strong id="dashboardDelivered">0</strong>
-</div>
-
-</section>
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>Recent Loads</h2>
-
-<a href="loads.html" class="small-btn">
-View All
-</a>
-
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Load #</th>
-<th>Broker</th>
-<th>Carrier</th>
-<th>Driver / Truck</th>
-<th>Revenue</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody id="dashboardRecentLoads">
-
-<tr>
-
-<td colspan="6">
-
-No loads yet.
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>Driver Fleet Status</h2>
-
-<a href="drivers.html" class="small-btn">
-
-Manage Drivers
-
-</a>
-
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Driver</th>
-<th>Assigned Truck</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody id="dashboardDriversTable">
-
-<tr>
-
-<td colspan="3">
-
-No drivers available.
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
+        <tbody id="dashboardDriversTable">
+          <tr>
+            <td colspan="3">No drivers available.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
 </main>
 
 </div>
 
 </body>
-
 </html>
