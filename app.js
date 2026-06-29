@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center
+// GraniteSky Dispatch Center v1.0
 
 const users = [
   {
@@ -68,22 +68,46 @@ function showUserName() {
   }
 }
 
-// STORAGE
+// STORAGE HELPERS
+
+function getData(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+function saveData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
 
 function getLoads() {
-  return JSON.parse(localStorage.getItem("gsLoads")) || [];
+  return getData("gsLoads");
 }
 
 function saveLoads(loads) {
-  localStorage.setItem("gsLoads", JSON.stringify(loads));
+  saveData("gsLoads", loads);
 }
 
 function getDrivers() {
-  return JSON.parse(localStorage.getItem("gsDrivers")) || [];
+  return getData("gsDrivers");
 }
 
 function saveDrivers(drivers) {
-  localStorage.setItem("gsDrivers", JSON.stringify(drivers));
+  saveData("gsDrivers", drivers);
+}
+
+function getTrucks() {
+  return getData("gsTrucks");
+}
+
+function saveTrucks(trucks) {
+  saveData("gsTrucks", trucks);
+}
+
+function getCarriers() {
+  return getData("gsCarriers");
+}
+
+function saveCarriers(carriers) {
+  saveData("gsCarriers", carriers);
 }
 
 // DRIVERS
@@ -96,7 +120,7 @@ if (driverForm) {
 
     const drivers = getDrivers();
 
-    const newDriver = {
+    const driver = {
       name: document.getElementById("driverName").value.trim(),
       phone: document.getElementById("driverPhone").value.trim(),
       email: document.getElementById("driverEmail").value.trim(),
@@ -106,7 +130,7 @@ if (driverForm) {
       notes: document.getElementById("driverNotes").value.trim()
     };
 
-    drivers.unshift(newDriver);
+    drivers.unshift(driver);
     saveDrivers(drivers);
 
     driverForm.reset();
@@ -121,31 +145,23 @@ function renderDrivers() {
   const drivers = getDrivers();
 
   if (drivers.length === 0) {
-    table.innerHTML = `
-      <tr>
-        <td colspan="7">No drivers have been added yet.</td>
-      </tr>
-    `;
+    table.innerHTML = `<tr><td colspan="7">No drivers added yet.</td></tr>`;
     return;
   }
 
-  table.innerHTML = drivers.map((driver, index) => {
-    return `
-      <tr>
-        <td>${driver.name}</td>
-        <td>${driver.phone || "-"}</td>
-        <td>${driver.email || "-"}</td>
-        <td>${driver.truck || "-"}</td>
-        <td>${driver.equipment || "-"}</td>
-        <td>${driver.status}</td>
-        <td>
-          <div class="actions">
-            <button class="small-btn danger" onclick="deleteDriver(${index})">Delete</button>
-          </div>
-        </td>
-      </tr>
-    `;
-  }).join("");
+  table.innerHTML = drivers.map((driver, index) => `
+    <tr>
+      <td>${driver.name}</td>
+      <td>${driver.phone || "-"}</td>
+      <td>${driver.email || "-"}</td>
+      <td>${driver.truck || "-"}</td>
+      <td>${driver.equipment || "-"}</td>
+      <td>${driver.status}</td>
+      <td>
+        <button class="small-btn danger" onclick="deleteDriver(${index})">Delete</button>
+      </td>
+    </tr>
+  `).join("");
 }
 
 function deleteDriver(index) {
@@ -164,7 +180,7 @@ function clearDrivers() {
   renderDrivers();
 }
 
-// LOAD DRIVER DROPDOWN
+// LOAD DROPDOWNS
 
 function populateDriverDropdown() {
   const dropdown = document.getElementById("driver");
@@ -174,11 +190,6 @@ function populateDriverDropdown() {
 
   dropdown.innerHTML = `<option value="">Select Driver</option>`;
 
-  if (drivers.length === 0) {
-    dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
-    return;
-  }
-
   drivers.forEach(driver => {
     dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
   });
@@ -186,7 +197,7 @@ function populateDriverDropdown() {
   dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
 }
 
-// LOAD FORM
+// LOADS
 
 const loadForm = document.getElementById("loadForm");
 
@@ -198,7 +209,7 @@ if (loadForm) {
 
     const loads = getLoads();
 
-    const newLoad = {
+    const load = {
       loadNumber: document.getElementById("loadNumber").value.trim(),
       driver: document.getElementById("driver").value,
       pickup: document.getElementById("pickup").value.trim(),
@@ -210,7 +221,7 @@ if (loadForm) {
       notes: document.getElementById("notes").value.trim()
     };
 
-    loads.unshift(newLoad);
+    loads.unshift(load);
     saveLoads(loads);
 
     loadForm.reset();
@@ -218,8 +229,6 @@ if (loadForm) {
     renderLoads();
   });
 }
-
-// LOAD TABLE
 
 function renderLoads() {
   populateDriverDropdown();
@@ -230,11 +239,7 @@ function renderLoads() {
   const loads = getLoads();
 
   if (loads.length === 0) {
-    table.innerHTML = `
-      <tr>
-        <td colspan="8">No loads have been added yet.</td>
-      </tr>
-    `;
+    table.innerHTML = `<tr><td colspan="8">No loads added yet.</td></tr>`;
     return;
   }
 
@@ -303,11 +308,9 @@ function clearLoads() {
 
 function renderDashboard() {
   const loads = getLoads();
+  const drivers = getDrivers();
 
-  const revenue = loads.reduce((total, load) => {
-    return total + Number(load.rate || 0);
-  }, 0);
-
+  const revenue = loads.reduce((total, load) => total + Number(load.rate || 0), 0);
   const inTransit = loads.filter(load => load.status === "In Transit").length;
   const delivered = loads.filter(load => load.status === "Delivered").length;
 
@@ -315,21 +318,19 @@ function renderDashboard() {
   const loadsBox = document.getElementById("dashboardLoads");
   const transitBox = document.getElementById("dashboardTransit");
   const deliveredBox = document.getElementById("dashboardDelivered");
+  const driversBox = document.getElementById("dashboardDrivers");
   const recentTable = document.getElementById("dashboardRecentLoads");
 
   if (revenueBox) revenueBox.textContent = "$" + revenue.toLocaleString();
   if (loadsBox) loadsBox.textContent = loads.length;
   if (transitBox) transitBox.textContent = inTransit;
   if (deliveredBox) deliveredBox.textContent = delivered;
+  if (driversBox) driversBox.textContent = drivers.length;
 
   if (!recentTable) return;
 
   if (loads.length === 0) {
-    recentTable.innerHTML = `
-      <tr>
-        <td colspan="5">No loads have been added yet.</td>
-      </tr>
-    `;
+    recentTable.innerHTML = `<tr><td colspan="5">No loads added yet.</td></tr>`;
     return;
   }
 
