@@ -28,65 +28,26 @@ function ensureIds(key, prefix) {
   return updated;
 }
 
-// Loads
-function getLoads() {
-  return ensureIds("gsLoads", "load");
-}
+function getLoads() { return ensureIds("gsLoads", "load"); }
+function saveLoads(data) { saveData("gsLoads", data); }
 
-function saveLoads(data) {
-  saveData("gsLoads", data);
-}
+function getDrivers() { return ensureIds("gsDrivers", "driver"); }
+function saveDrivers(data) { saveData("gsDrivers", data); }
 
-// Drivers
-function getDrivers() {
-  return ensureIds("gsDrivers", "driver");
-}
+function getTrucks() { return ensureIds("gsTrucks", "truck"); }
+function saveTrucks(data) { saveData("gsTrucks", data); }
 
-function saveDrivers(data) {
-  saveData("gsDrivers", data);
-}
+function getCompanies() { return ensureIds("gsCompanies", "company"); }
+function saveCompanies(data) { saveData("gsCompanies", data); }
 
-// Trucks
-function getTrucks() {
-  return ensureIds("gsTrucks", "truck");
-}
+function getCarriers() { return ensureIds("gsCarriers", "carrier"); }
+function saveCarriers(data) { saveData("gsCarriers", data); }
 
-function saveTrucks(data) {
-  saveData("gsTrucks", data);
-}
+function getDocuments() { return ensureIds("gsDocuments", "document"); }
+function saveDocuments(data) { saveData("gsDocuments", data); }
 
-// Companies / Brokers / Customers
-function getCompanies() {
-  return ensureIds("gsCompanies", "company");
-}
+function getMessages() { return ensureIds("gsMessages", "message"); }
+function saveMessages(data) { saveData("gsMessages", data); }
 
-function saveCompanies(data) {
-  saveData("gsCompanies", data);
-}
-
-// Carriers
-function getCarriers() {
-  return ensureIds("gsCarriers", "carrier");
-}
-
-function saveCarriers(data) {
-  saveData("gsCarriers", data);
-}
-
-// Documents
-function getDocuments() {
-  return ensureIds("gsDocuments", "document");
-}
-
-function saveDocuments(data) {
-  saveData("gsDocuments", data);
-}
-
-// Messages
-function getMessages() {
-  return ensureIds("gsMessages", "message");
-}
-
-function saveMessages(data) {
-  saveData("gsMessages", data);
-}
+function getUsers() { return ensureIds("gsUsers", "user"); }
+function saveUsers(data) { saveData("gsUsers", data); }
