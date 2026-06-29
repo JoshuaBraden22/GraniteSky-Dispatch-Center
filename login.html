@@ -1,33 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | GraniteSky Dispatch Center</title>
+
+<title>GraniteSky Dispatch Center | Login</title>
+
 <link rel="stylesheet" href="style.css">
-<script defer src="js/auth.js?v=4000"></script>
+
+<script defer src="js/storage.js?v=5000"></script>
+<script defer src="js/auth.js?v=5000"></script>
+
 </head>
 
 <body class="login-body">
 
-<main class="login-wrap">
-  <section class="login-card">
-    <img src="logo.png" class="main-logo" alt="GraniteSky Dispatching Logo">
+<div class="login-container">
 
-    <h1>GraniteSky Dispatch Center</h1>
-    <p>Secure access for GraniteSky employees and carriers.</p>
+    <div class="login-card">
 
-    <form id="loginForm">
-      <label>Email Address</label>
-      <input type="email" id="email" placeholder="Enter your email" required>
+        <img src="logo.png" alt="GraniteSky Dispatch Center" class="login-logo">
 
-      <label>Password</label>
-      <input type="password" id="password" placeholder="Enter your password" required>
+        <h1>GraniteSky Dispatch Center</h1>
 
-      <button type="submit" class="btn-primary">Sign In</button>
-    </form>
-  </section>
-</main>
+        <p>
+            Sign in to continue.
+        </p>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email Address"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    required>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn-primary">
+
+                Login
+
+            </button>
+
+        </form>
+
+        <div class="login-footer">
+
+            <small>
+
+                GraniteSky Dispatch Center
+                <br>
+                Secure Login
+
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
+
 </html>
