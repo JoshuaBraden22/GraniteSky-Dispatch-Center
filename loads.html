@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -8,10 +10,11 @@
 
 <link rel="stylesheet" href="style.css">
 
-<script defer src="js/storage.js"></script>
-<script defer src="js/auth.js"></script>
-<script defer src="js/layout.js"></script>
-<script defer src="js/loads.js"></script>
+<script defer src="js/storage.js?v=3000"></script>
+<script defer src="js/auth.js?v=3000"></script>
+<script defer src="js/layout.js?v=3000"></script>
+<script defer src="js/loads.js?v=3000"></script>
+
 </head>
 
 <body>
@@ -19,119 +22,189 @@
 <div class="app-shell">
 
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <img src="logo.png" alt="GraniteSky Dispatching">
-  </div>
 
-  <nav class="sidebar-nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="loads.html" class="active">Loads</a>
-    <a href="dispatch-board.html">Dispatch Board</a>
-    <a href="drivers.html">Drivers</a>
-    <a href="trucks.html">Trucks</a>
-    <a href="companies.html">Companies</a>
-    <a href="carriers.html">Carriers</a>
-    <a href="documents.html">Documents</a>
-    <a href="calendar.html">Calendar</a>
-    <a href="messages.html">Messages</a>
-    <a href="accounting.html">Accounting</a>
-    <button onclick="logout()">Logout</button>
-  </nav>
+<div class="sidebar-logo">
+<img src="logo.png" alt="GraniteSky Dispatch Center">
+</div>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html">Dashboard</a>
+
+<a href="loads.html" class="active">Loads</a>
+
+<a href="dispatch-board.html">Dispatch Board</a>
+
+<a href="drivers.html">Drivers</a>
+
+<a href="trucks.html">Trucks</a>
+
+<a href="companies.html">Companies</a>
+
+<a href="carriers.html">Carriers</a>
+
+<a href="documents.html">Documents</a>
+
+<a href="calendar.html">Calendar</a>
+
+<a href="messages.html">Messages</a>
+
+<a href="accounting.html">Accounting</a>
+
+<button onclick="logout()">Logout</button>
+
+</nav>
+
 </aside>
 
 <main class="main-content">
 
-  <div class="topbar">
-    <div>
-      <h1>Load Management</h1>
-      <p>Create loads using saved brokers, carriers, drivers, and trucks.</p>
-    </div>
-  </div>
+<div class="topbar">
 
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Create New Load</h2>
-    </div>
+<div>
 
-    <form id="loadForm" class="form-grid">
-      <input id="loadNumber" placeholder="Load Number" required>
+<h1>Load Management</h1>
 
-      <select id="broker">
-        <option value="">Select Broker / Customer</option>
-      </select>
+<p>Create and manage dispatched loads.</p>
 
-      <select id="carrier">
-        <option value="">Select Carrier</option>
-      </select>
+</div>
 
-      <select id="driver">
-        <option value="">Select Driver</option>
-      </select>
+</div>
 
-      <select id="truck">
-        <option value="">Select Truck</option>
-      </select>
+<section class="panel">
 
-      <select id="status">
-        <option>Pickup Today</option>
-        <option>In Transit</option>
-        <option>Delivered</option>
-      </select>
+<div class="panel-header">
 
-      <input id="pickup" placeholder="Pickup City, State" required>
-      <input id="delivery" placeholder="Delivery City, State" required>
+<h2>Create New Load</h2>
 
-      <input type="date" id="pickupDate">
-      <input type="date" id="deliveryDate">
+</div>
 
-      <input id="commodity" placeholder="Commodity">
-      <input id="weight" placeholder="Weight">
+<form id="loadForm" class="form-grid">
 
-      <input id="miles" type="number" placeholder="Miles">
-      <input id="rate" type="number" placeholder="Load Rate">
+<input id="loadNumber" placeholder="Load Number" required>
 
-      <textarea id="notes" placeholder="Dispatch notes, appointment details, broker notes, etc."></textarea>
+<select id="broker">
+<option value="">Select Broker / Customer</option>
+</select>
 
-      <button class="btn-primary" type="submit">Save Load</button>
-    </form>
-  </section>
+<select id="carrier">
+<option value="">Select Carrier</option>
+</select>
 
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Current Loads</h2>
-      <button class="small-btn danger" onclick="clearLoads()">Clear All</button>
-    </div>
+<select id="driver">
+<option value="">Select Driver</option>
+</select>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Load #</th>
-            <th>Broker</th>
-            <th>Carrier</th>
-            <th>Lane</th>
-            <th>Driver</th>
-            <th>Truck</th>
-            <th>Pickup</th>
-            <th>Delivery</th>
-            <th>Rate</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+<select id="truck">
+<option value="">Select Truck</option>
+</select>
 
-        <tbody id="loadsTable">
-          <tr>
-            <td colspan="11">No loads added yet.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+<select id="status">
+<option>Pickup Today</option>
+<option>In Transit</option>
+<option>Delivered</option>
+</select>
+
+<input id="pickup" placeholder="Pickup City" required>
+
+<input id="delivery" placeholder="Delivery City" required>
+
+<input type="date" id="pickupDate">
+
+<input type="date" id="deliveryDate">
+
+<input id="commodity" placeholder="Commodity">
+
+<input id="weight" placeholder="Weight">
+
+<input id="miles" type="number" placeholder="Miles">
+
+<input id="rate" type="number" placeholder="Revenue">
+
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<button class="btn-primary" type="submit">
+
+Save Load
+
+</button>
+
+</form>
+
+</section>
+
+<section class="panel">
+
+<div class="panel-header">
+
+<h2>Current Loads</h2>
+
+<button class="small-btn danger" onclick="clearLoads()">
+
+Clear All
+
+</button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Load #</th>
+
+<th>Broker</th>
+
+<th>Carrier</th>
+
+<th>Lane</th>
+
+<th>Driver</th>
+
+<th>Truck</th>
+
+<th>Pickup</th>
+
+<th>Delivery</th>
+
+<th>Revenue</th>
+
+<th>Status</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="loadsTable">
+
+<tr>
+
+<td colspan="11">
+
+No loads added yet.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
 
 </main>
 
 </div>
 
 </body>
+
 </html>
