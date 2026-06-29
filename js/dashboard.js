@@ -33,7 +33,7 @@ function renderRecentLoads(loads) {
   if (!table) return;
 
   if (loads.length === 0) {
-    table.innerHTML = `<tr><td colspan="5">No loads added yet.</td></tr>`;
+    table.innerHTML = `<tr><td colspan="6">No loads added yet.</td></tr>`;
     return;
   }
 
@@ -43,7 +43,8 @@ function renderRecentLoads(loads) {
     return `
       <tr>
         <td>${load.loadNumber}</td>
-        <td>${load.pickup} → ${load.delivery}</td>
+        <td>${load.broker || "Unassigned"}</td>
+        <td>${load.carrier || "Unassigned"}</td>
         <td>${load.driver || "Unassigned"} / Unit ${load.truck || "Unassigned"}</td>
         <td>${formatMoney(load.rate)}</td>
         <td><span class="badge ${badgeClass}">${load.status}</span></td>
