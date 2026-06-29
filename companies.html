@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Companies | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); renderCompanies();">
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="loads.html">Loads</a>
+    <a href="dispatch-board.html">Dispatch Board</a>
+    <a href="drivers.html">Drivers</a>
+    <a href="trucks.html">Trucks</a>
+    <a href="companies.html" class="active">Companies</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="documents.html">Documents</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="messages.html">Messages</a>
+    <a href="accounting.html">Accounting</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Companies</h1>
+      <p>Manage brokers, customers, shippers, and receivers.</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Add Company</h2>
+    </div>
+
+    <form id="companyForm" class="form-grid">
+      <input id="companyName" placeholder="Company Name" required>
+
+      <select id="companyType">
+        <option>Broker</option>
+        <option>Customer</option>
+        <option>Shipper</option>
+        <option>Receiver</option>
+      </select>
+
+      <input id="companyMC" placeholder="MC Number">
+      <input id="companyDOT" placeholder="DOT Number">
+
+      <input id="companyContact" placeholder="Contact Person">
+      <input id="companyPhone" placeholder="Phone Number">
+
+      <input id="companyEmail" placeholder="Email Address">
+      <input id="companyTerms" placeholder="Payment Terms">
+
+      <textarea id="companyNotes" placeholder="Company Notes"></textarea>
+
+      <button class="btn-primary" type="submit">Save Company</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Saved Companies</h2>
+      <button class="small-btn danger" onclick="clearCompanies()">Clear All</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Type</th>
+            <th>MC</th>
+            <th>DOT</th>
+            <th>Contact</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Terms</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="companiesTable">
+          <tr>
+            <td colspan="9">No companies have been added yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
