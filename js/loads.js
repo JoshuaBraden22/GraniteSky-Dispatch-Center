@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Upgraded Loads Module
+// GraniteSky Dispatch Center - Loads Module with Linked IDs
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("loadForm")) return;
@@ -18,15 +18,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const loads = getLoads();
 
-    const selectedDriver = getValue("driver");
-    const selectedTruck = getValue("truck");
+    const brokerId = getValue("broker");
+    const carrierId = getValue("carrier");
+    const driverId = getValue("driver");
+    const truckId = getValue("truck");
+
+    const broker = getCompanies().find(company => company.id === brokerId);
+    const carrier = getCarriers().find(carrier => carrier.id === carrierId);
+    const driver = getDrivers().find(driver => driver.id === driverId);
+    const truck = getTrucks().find(truck => truck.id === truckId);
 
     const load = {
+      id: generateId("load"),
       loadNumber: getValue("loadNumber"),
-      broker: getValue("broker"),
-      carrier: getValue("carrier"),
-      driver: selectedDriver,
-      truck: selectedTruck,
+
+      brokerId,
+      brokerName: broker ? broker.name : "Unassigned",
+
+      carrierId,
+      carrierName: carrier ? carrier.name : "Unassigned",
+
+      driverId,
+      driverName: driver ? driver.name : "Unassigned",
+
+      truckId,
+      truckUnit: truck ? truck.unit : "Unassigned",
+
       pickup: getValue("pickup"),
       delivery: getValue("delivery"),
       pickupDate: getValue("pickupDate"),
@@ -68,10 +85,10 @@ function populateCompanyDropdown() {
   dropdown.innerHTML = `<option value="">Select Broker / Customer</option>`;
 
   companies.forEach(company => {
-    dropdown.innerHTML += `<option value="${company.name}">${company.name} (${company.type})</option>`;
+    dropdown.innerHTML += `<option value="${company.id}">${company.name} (${company.type})</option>`;
   });
 
-  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+  dropdown.innerHTML += `<option value="">Unassigned</option>`;
 }
 
 function populateCarrierDropdown() {
@@ -83,10 +100,10 @@ function populateCarrierDropdown() {
   dropdown.innerHTML = `<option value="">Select Carrier</option>`;
 
   carriers.forEach(carrier => {
-    dropdown.innerHTML += `<option value="${carrier.name}">${carrier.name}</option>`;
+    dropdown.innerHTML += `<option value="${carrier.id}">${carrier.name}</option>`;
   });
 
-  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+  dropdown.innerHTML += `<option value="">Unassigned</option>`;
 }
 
 function populateDriverDropdown() {
@@ -98,10 +115,10 @@ function populateDriverDropdown() {
   dropdown.innerHTML = `<option value="">Select Driver</option>`;
 
   drivers.forEach(driver => {
-    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+    dropdown.innerHTML += `<option value="${driver.id}">${driver.name}</option>`;
   });
 
-  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+  dropdown.innerHTML += `<option value="">Unassigned</option>`;
 }
 
 function populateTruckDropdown() {
@@ -113,10 +130,10 @@ function populateTruckDropdown() {
   dropdown.innerHTML = `<option value="">Select Truck</option>`;
 
   trucks.forEach(truck => {
-    dropdown.innerHTML += `<option value="${truck.unit}">Unit ${truck.unit} - ${truck.make || ""} ${truck.model || ""}</option>`;
+    dropdown.innerHTML += `<option value="${truck.id}">Unit ${truck.unit} - ${truck.make || ""} ${truck.model || ""}</option>`;
   });
 
-  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+  dropdown.innerHTML += `<option value="">Unassigned</option>`;
 }
 
 function renderLoads() {
@@ -136,14 +153,19 @@ function renderLoads() {
       load.status === "In Transit" ? "transit" :
       "pickup";
 
+    const broker = getCompanies().find(company => company.id === load.brokerId);
+    const carrier = getCarriers().find(carrier => carrier.id === load.carrierId);
+    const driver = getDrivers().find(driver => driver.id === load.driverId);
+    const truck = getTrucks().find(truck => truck.id === load.truckId);
+
     return `
       <tr>
         <td>${load.loadNumber}</td>
-        <td>${load.broker || "Unassigned"}</td>
-        <td>${load.carrier || "Unassigned"}</td>
+        <td>${broker ? broker.name : load.brokerName || "Unassigned"}</td>
+        <td>${carrier ? carrier.name : load.carrierName || "Unassigned"}</td>
         <td>${load.pickup} → ${load.delivery}</td>
-        <td>${load.driver || "Unassigned"}</td>
-        <td>${load.truck || "Unassigned"}</td>
+        <td>${driver ? driver.name : load.driverName || "Unassigned"}</td>
+        <td>${truck ? truck.unit : load.truckUnit || "Unassigned"}</td>
         <td>${formatDate(load.pickupDate)}</td>
         <td>${formatDate(load.deliveryDate)}</td>
         <td>${formatMoney(load.rate)}</td>
