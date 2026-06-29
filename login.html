@@ -1,56 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>GraniteSky Dispatch Center | Login</title>
-
-    <link rel="stylesheet" href="style.css">
-    <script defer src="app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | GraniteSky Dispatch Center</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="js/auth.js?v=4000"></script>
 </head>
 
 <body class="login-body">
 
-    <main class="login-wrap">
+<main class="login-wrap">
+  <section class="login-card">
+    <img src="logo.png" class="main-logo" alt="GraniteSky Dispatching Logo">
 
-        <section class="login-card center-card">
+    <h1>GraniteSky Dispatch Center</h1>
+    <p>Secure access for GraniteSky employees and carriers.</p>
 
-            <img src="logo.png" class="main-logo" alt="GraniteSky Dispatching Logo">
+    <form id="loginForm">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
 
-            <h1>GraniteSky Dispatch Center</h1>
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required>
 
-            <p>Secure access for GraniteSky employees and carriers.</p>
-
-            <form id="loginForm">
-
-                <label for="email">Email Address</label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    required
-                >
-
-                <label for="password">Password</label>
-
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Enter your password"
-                    required
-                >
-
-                <button type="submit" class="btn-primary">
-                    Sign In
-                </button>
-
-            </form>
-
-        </section>
-
-    </main>
+      <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+  </section>
+</main>
 
 </body>
 </html>
