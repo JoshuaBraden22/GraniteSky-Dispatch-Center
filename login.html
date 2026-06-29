@@ -1,38 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GraniteSky Dispatch Center | Login</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GraniteSky Dispatch Center | Login</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script defer src="app.js"></script>
 </head>
 
 <body class="login-body">
 
-  <main class="login-wrap">
-    <section class="login-card">
-      <div class="brand-mark">GS</div>
+    <main class="login-wrap">
 
-      <h1>GraniteSky Dispatch Center</h1>
-      <p>Secure dispatcher and carrier access.</p>
+        <section class="login-card center-card">
 
-      <form id="loginForm">
-        <label>Email Address</label>
-        <input type="email" id="email" placeholder="dispatcher@granitesky.com" required />
+            <img src="logo.png" class="main-logo" alt="GraniteSky Dispatching Logo">
 
-        <label>Password</label>
-        <input type="password" id="password" placeholder="Enter password" required />
+            <h1>GraniteSky Dispatch Center</h1>
 
-        <button type="submit" class="btn-primary">Sign In</button>
-      </form>
+            <p>Secure access for GraniteSky employees and carriers.</p>
 
-      <div class="demo-logins">
-        <p><strong>Demo Dispatcher:</strong> admin@granitesky.com / admin123</p>
-        <p><strong>Demo Carrier:</strong> carrier@granitesky.com / carrier123</p>
-      </div>
-    </section>
-  </main>
+            <form id="loginForm">
+
+                <label for="email">Email Address</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+                <label for="password">Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+                <button type="submit" class="btn-primary">
+                    Sign In
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
 
 </body>
 </html>
