@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calendar | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); renderCalendar();">
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="loads.html">Loads</a>
+    <a href="dispatch-board.html">Dispatch Board</a>
+    <a href="drivers.html">Drivers</a>
+    <a href="trucks.html">Trucks</a>
+    <a href="companies.html">Companies</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="documents.html">Documents</a>
+    <a class="active" href="calendar.html">Calendar</a>
+    <a href="messages.html">Messages</a>
+    <a href="accounting.html">Accounting</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Dispatch Calendar</h1>
+      <p>Pickup and delivery schedule from saved loads.</p>
+    </div>
+
+    <a href="loads.html" class="btn-primary">+ New Load</a>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Upcoming Schedule</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Load #</th>
+            <th>Lane</th>
+            <th>Driver</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="calendarTable">
+          <tr>
+            <td colspan="6">No scheduled loads yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
