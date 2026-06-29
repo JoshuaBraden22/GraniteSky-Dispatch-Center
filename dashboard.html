@@ -1,100 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraniteSky Dispatch Center | Dashboard</title>
 
-  <title>Dashboard | GraniteSky Dispatch Center</title>
-
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="app.js"></script>
 </head>
 
 <body onload="requireLogin(); showUserName(); renderDashboard();">
 
 <div class="app-shell">
 
-  <aside class="sidebar">
+    <aside class="sidebar">
 
-    <div class="sidebar-logo">
-      <img src="logo.png" alt="GraniteSky Dispatching Logo">
-    </div>
+        <div class="sidebar-logo">
+            <img src="logo.png" alt="GraniteSky Dispatching">
+        </div>
 
-    <nav class="sidebar-nav">
-      <a class="active" href="dashboard.html">Dashboard</a>
-      <a href="loads.html">Loads</a>
-      <a href="#">Carriers</a>
-      <a href="#">Drivers</a>
-      <a href="#">Trucks</a>
-      <a href="#">Documents</a>
-      <a href="#">Invoices</a>
-      <a href="#">Settings</a>
-      <button onclick="logout()">Logout</button>
-    </nav>
+        <nav class="sidebar-nav">
 
-  </aside>
+            <a class="active" href="dashboard.html">
+                Dashboard
+            </a>
 
-  <main class="main-content">
+            <a href="loads.html?v=2">
+                Loads
+            </a>
 
-    <section class="topbar">
-      <div>
-        <h1>Dispatcher Dashboard</h1>
-        <p>Welcome back, <strong id="loggedUser">Dispatcher</strong>.</p>
-      </div>
+            <a href="#">
+                Carriers
+            </a>
 
-      <a href="loads.html" class="btn-primary">Add New Load</a>
-    </section>
+            <a href="#">
+                Drivers
+            </a>
 
-    <section class="stat-grid">
-      <div class="stat-card">
-        <span>Total Revenue</span>
-        <strong id="dashboardRevenue">$0</strong>
-      </div>
+            <a href="#">
+                Trucks
+            </a>
 
-      <div class="stat-card">
-        <span>Total Loads</span>
-        <strong id="dashboardLoads">0</strong>
-      </div>
+            <a href="#">
+                Documents
+            </a>
 
-      <div class="stat-card">
-        <span>In Transit</span>
-        <strong id="dashboardTransit">0</strong>
-      </div>
+            <a href="#">
+                Invoices
+            </a>
 
-      <div class="stat-card">
-        <span>Delivered</span>
-        <strong id="dashboardDelivered">0</strong>
-      </div>
-    </section>
+            <a href="#">
+                Settings
+            </a>
 
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Recent Loads</h2>
-        <a href="loads.html" class="small-btn">Manage Loads</a>
-      </div>
+            <button onclick="logout()">
+                Logout
+            </button>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Load #</th>
-              <th>Lane</th>
-              <th>Driver</th>
-              <th>Rate</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+        </nav>
 
-          <tbody id="dashboardRecentLoads">
-            <tr>
-              <td colspan="5">No loads have been added yet.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    </aside>
 
-  </main>
+    <main class="main-content">
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>Dispatcher Dashboard</h1>
+
+                <p>
+                    Welcome back,
+                    <strong id="loggedUser">Dispatcher</strong>
+                </p>
+
+            </div>
+
+            <a href="loads.html?v=2" class="btn-primary">
+                Add New Load
+            </a>
+
+        </div>
+
+        <section class="stat-grid">
+
+            <div class="stat-card">
+                <span>Total Revenue</span>
+                <strong id="dashboardRevenue">$0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Total Loads</span>
+                <strong id="dashboardLoads">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>In Transit</span>
+                <strong id="dashboardTransit">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Delivered</span>
+                <strong id="dashboardDelivered">0</strong>
+            </div>
+
+        </section>
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <h2>Recent Loads</h2>
+
+                <a href="loads.html?v=2" class="small-btn">
+                    Manage Loads
+                </a>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Load #</th>
+                            <th>Lane</th>
+                            <th>Driver</th>
+                            <th>Rate</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="dashboardRecentLoads">
+
+                        <tr>
+
+                            <td colspan="5">
+
+                                No loads have been added yet.
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
