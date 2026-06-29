@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Documents | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); populateDocumentLoadDropdown(); renderDocuments();">
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="loads.html">Loads</a>
+    <a href="dispatch-board.html">Dispatch Board</a>
+    <a href="drivers.html">Drivers</a>
+    <a href="trucks.html">Trucks</a>
+    <a href="companies.html">Companies</a>
+    <a href="carriers.html">Carriers</a>
+    <a class="active" href="documents.html">Documents</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="messages.html">Messages</a>
+    <a href="accounting.html">Accounting</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Documents</h1>
+      <p>Organize rate confirmations, BOLs, PODs, receipts, and load paperwork.</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Add Document Record</h2>
+    </div>
+
+    <form id="documentForm" class="form-grid">
+
+      <select id="documentLoad">
+        <option value="">Attach to Load</option>
+      </select>
+
+      <select id="documentType">
+        <option>Rate Confirmation</option>
+        <option>Bill of Lading</option>
+        <option>Proof of Delivery</option>
+        <option>Lumper Receipt</option>
+        <option>Scale Ticket</option>
+        <option>Fuel Receipt</option>
+        <option>Invoice</option>
+        <option>Other</option>
+      </select>
+
+      <input id="documentName" placeholder="Document Name" required>
+      <input id="documentFile" type="file">
+
+      <textarea id="documentNotes" placeholder="Document notes"></textarea>
+
+      <button class="btn-primary" type="submit">Save Document</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Saved Documents</h2>
+      <button class="small-btn danger" onclick="clearDocuments()">Clear All</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Load</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>File</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="documentsTable">
+          <tr>
+            <td colspan="6">No documents have been added yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
