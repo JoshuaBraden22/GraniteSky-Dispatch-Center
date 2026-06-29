@@ -3,12 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Dashboard | GraniteSky Dispatch Center</title>
+
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/dashboard.js"></script>
 </head>
 
-<body onload="requireLogin(); showUserName(); renderDashboard();">
+<body>
 
 <div class="app-shell">
 
@@ -18,14 +24,17 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a class="active" href="dashboard.html">Dashboard</a>
+    <a href="dashboard.html">Dashboard</a>
     <a href="loads.html">Loads</a>
+    <a href="dispatch-board.html">Dispatch Board</a>
     <a href="drivers.html">Drivers</a>
     <a href="trucks.html">Trucks</a>
+    <a href="companies.html">Companies</a>
     <a href="carriers.html">Carriers</a>
     <a href="documents.html">Documents</a>
-    <a href="invoices.html">Invoices</a>
-    <a href="settings.html">Settings</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="messages.html">Messages</a>
+    <a href="accounting.html">Accounting</a>
     <button onclick="logout()">Logout</button>
   </nav>
 </aside>
@@ -35,7 +44,7 @@
   <div class="topbar">
     <div>
       <h1>Dispatcher Dashboard</h1>
-      <p>Welcome back, <strong id="loggedUser"></strong></p>
+      <p>Welcome back, <strong id="loggedUser" class="logged-user"></strong></p>
     </div>
 
     <a href="loads.html" class="btn-primary">+ New Load</a>
@@ -83,7 +92,7 @@
 
         <tbody id="dashboardRecentLoads">
           <tr>
-            <td colspan="5">No loads have been added yet.</td>
+            <td colspan="5">No loads added yet.</td>
           </tr>
         </tbody>
       </table>
@@ -108,7 +117,7 @@
 
         <tbody id="dashboardDriversTable">
           <tr>
-            <td colspan="3">No drivers have been added yet.</td>
+            <td colspan="3">No drivers added yet.</td>
           </tr>
         </tbody>
       </table>
