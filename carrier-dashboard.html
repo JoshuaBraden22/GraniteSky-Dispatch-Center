@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Carrier Portal | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script defer src="js/storage.js?v=7000"></script>
+<script defer src="js/auth.js?v=7000"></script>
+<script defer src="js/layout.js?v=7000"></script>
+<script defer src="js/carrier-dashboard.js?v=7000"></script>
+</head>
+
+<body>
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatch Center">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="carrier-dashboard.html?v=7000" class="active">My Loads</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Carrier Portal</h1>
+      <p>Welcome, <strong id="loggedUser" class="logged-user"></strong></p>
+    </div>
+  </div>
+
+  <section class="stat-grid">
+    <div class="stat-card">
+      <span>Assigned Loads</span>
+      <strong id="carrierTotalLoads">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>In Transit</span>
+      <strong id="carrierTransitLoads">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Delivered</span>
+      <strong id="carrierDeliveredLoads">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Total Revenue</span>
+      <strong id="carrierRevenue">$0.00</strong>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Assigned Loads</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Load #</th>
+            <th>Lane</th>
+            <th>Pickup</th>
+            <th>Delivery</th>
+            <th>Revenue</th>
+            <th>Status</th>
+            <th>Documents</th>
+          </tr>
+        </thead>
+
+        <tbody id="carrierLoadsTable">
+          <tr>
+            <td colspan="7">No assigned loads.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Upload Document Record</h2>
+    </div>
+
+    <form id="carrierDocumentForm" class="form-grid">
+      <select id="carrierDocumentLoad" required>
+        <option value="">Select Load</option>
+      </select>
+
+      <select id="carrierDocumentType">
+        <option>Bill of Lading</option>
+        <option>Proof of Delivery</option>
+        <option>Lumper Receipt</option>
+        <option>Scale Ticket</option>
+        <option>Fuel Receipt</option>
+        <option>Other</option>
+      </select>
+
+      <input id="carrierDocumentName" placeholder="Document Name" required>
+      <input id="carrierDocumentFile" type="file">
+
+      <textarea id="carrierDocumentNotes" placeholder="Notes"></textarea>
+
+      <button class="btn-primary" type="submit">Submit Document</button>
+    </form>
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
