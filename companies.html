@@ -7,10 +7,14 @@
 <title>Companies | GraniteSky Dispatch Center</title>
 
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/companies.js"></script>
 </head>
 
-<body onload="requireLogin(); renderCompanies();">
+<body>
 
 <div class="app-shell">
 
@@ -98,7 +102,7 @@
 
         <tbody id="companiesTable">
           <tr>
-            <td colspan="9">No companies have been added yet.</td>
+            <td colspan="9">No companies added yet.</td>
           </tr>
         </tbody>
       </table>
