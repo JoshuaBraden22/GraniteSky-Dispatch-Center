@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Users / Access Management Module
+// GraniteSky Dispatch Center - Access Management Module
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("userForm")) return;
@@ -12,38 +12,67 @@ document.addEventListener("DOMContentLoaded", () => {
   userForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
+    const editId = document.getElementById("userEditId")?.value || "";
     const users = getUsers();
 
     const carrierId = getValue("userCarrier");
     const carrier = getCarriers().find(c => c.id === carrierId);
 
-    const user = {
-      id: generateId("user"),
+    const userData = {
       name: getValue("userName"),
       email: getValue("userEmail").toLowerCase(),
-      password: getValue("userPassword"),
       role: getValue("userRole"),
       permission: getValue("userPermission"),
-      carrierId: carrierId,
+      carrierId,
       carrierName: carrier ? carrier.name : "",
       status: getValue("userStatus"),
-      forcePasswordChange: getValue("forcePasswordChange") === "Yes",
-      createdAt: new Date().toISOString()
+      forcePasswordChange: getValue("forcePasswordChange") === "Yes"
     };
 
-    if (users.some(u => u.email === user.email)) {
-      alert("An account with this email already exists.");
-      return;
+    const password = getValue("userPassword");
+
+    if (editId) {
+      const user = users.find(u => u.id === editId);
+      if (!user) return;
+
+      const emailUsed = users.some(u => u.email === userData.email && u.id !== editId);
+      if (emailUsed) {
+        alert("Another account already uses this email.");
+        return;
+      }
+
+      Object.assign(user, userData);
+
+      if (password) {
+        user.password = password;
+      }
+
+      saveUsers(users);
+      showNotification("User updated.");
+    } else {
+      if (!password) {
+        alert("Password is required for new users.");
+        return;
+      }
+
+      if (users.some(u => u.email === userData.email)) {
+        alert("An account with this email already exists.");
+        return;
+      }
+
+      users.unshift({
+        id: generateId("user"),
+        ...userData,
+        password,
+        createdAt: new Date().toISOString()
+      });
+
+      saveUsers(users);
+      showNotification("User account created.");
     }
 
-    users.unshift(user);
-    saveUsers(users);
-
-    userForm.reset();
-    populateUserCarrierDropdown();
+    resetUserForm();
     renderUsers();
-
-    showNotification("User account created.");
   });
 });
 
@@ -74,7 +103,7 @@ function renderUsers() {
     return;
   }
 
-  table.innerHTML = users.map((user, index) => `
+  table.innerHTML = users.map(user => `
     <tr>
       <td>${user.name}</td>
       <td>${user.email}</td>
@@ -84,21 +113,63 @@ function renderUsers() {
       <td>${user.status}</td>
       <td>${user.forcePasswordChange ? "Yes" : "No"}</td>
       <td>
-        <button class="small-btn" onclick="toggleUserStatus(${index})">
-          ${user.status === "Active" ? "Deactivate" : "Activate"}
-        </button>
-        <button class="small-btn danger" onclick="deleteUser(${index})">
-          Delete
-        </button>
+        <div class="actions">
+          <button class="small-btn" onclick="editUser('${user.id}')">Edit</button>
+          <button class="small-btn" onclick="resetUserPassword('${user.id}')">Reset Password</button>
+          <button class="small-btn" onclick="toggleUserStatus('${user.id}')">
+            ${user.status === "Active" ? "Deactivate" : "Activate"}
+          </button>
+          <button class="small-btn danger" onclick="deleteUser('${user.id}')">Delete</button>
+        </div>
       </td>
     </tr>
   `).join("");
 }
 
-function toggleUserStatus(index) {
-  const users = getUsers();
+function editUser(userId) {
+  const user = getUsers().find(u => u.id === userId);
+  if (!user) return;
 
-  users[index].status = users[index].status === "Active" ? "Inactive" : "Active";
+  document.getElementById("userEditId").value = user.id;
+  document.getElementById("userName").value = user.name || "";
+  document.getElementById("userEmail").value = user.email || "";
+  document.getElementById("userPassword").value = "";
+  document.getElementById("userPassword").placeholder = "Leave blank to keep current password";
+  document.getElementById("userRole").value = user.role || "Carrier";
+  document.getElementById("userPermission").value = user.permission || "Carrier Portal Only";
+  document.getElementById("userCarrier").value = user.carrierId || "";
+  document.getElementById("userStatus").value = user.status || "Active";
+  document.getElementById("forcePasswordChange").value = user.forcePasswordChange ? "Yes" : "No";
+
+  document.getElementById("userSubmitBtn").textContent = "Update Account";
+  document.getElementById("cancelEditBtn").style.display = "inline-block";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function resetUserPassword(userId) {
+  const newPassword = prompt("Enter new temporary password:");
+  if (!newPassword) return;
+
+  const users = getUsers();
+  const user = users.find(u => u.id === userId);
+  if (!user) return;
+
+  user.password = newPassword;
+  user.forcePasswordChange = true;
+
+  saveUsers(users);
+  renderUsers();
+
+  showNotification("Password reset.");
+}
+
+function toggleUserStatus(userId) {
+  const users = getUsers();
+  const user = users.find(u => u.id === userId);
+  if (!user) return;
+
+  user.status = user.status === "Active" ? "Inactive" : "Active";
 
   saveUsers(users);
   renderUsers();
@@ -106,14 +177,21 @@ function toggleUserStatus(index) {
   showNotification("User status updated.");
 }
 
-function deleteUser(index) {
+function deleteUser(userId) {
   if (!confirmDelete("user account")) return;
 
-  const users = getUsers();
-  users.splice(index, 1);
-
+  const users = getUsers().filter(u => u.id !== userId);
   saveUsers(users);
+
   renderUsers();
 
   showNotification("User deleted.", "#dc2626");
+}
+
+function resetUserForm() {
+  document.getElementById("userForm").reset();
+  document.getElementById("userEditId").value = "";
+  document.getElementById("userPassword").placeholder = "Temporary Password";
+  document.getElementById("userSubmitBtn").textContent = "Create Account";
+  document.getElementById("cancelEditBtn").style.display = "none";
 }
