@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Dashboard Module
+// GraniteSky Dispatch Center - Dashboard Module with Linked Load Data
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("dashboardRevenue")) return;
@@ -40,12 +40,17 @@ function renderRecentLoads(loads) {
   table.innerHTML = loads.slice(0, 5).map(load => {
     const badgeClass = getStatusClass(load.status);
 
+    const broker = getCompanies().find(company => company.id === load.brokerId);
+    const carrier = getCarriers().find(carrier => carrier.id === load.carrierId);
+    const driver = getDrivers().find(driver => driver.id === load.driverId);
+    const truck = getTrucks().find(truck => truck.id === load.truckId);
+
     return `
       <tr>
         <td>${load.loadNumber}</td>
-        <td>${load.broker || "Unassigned"}</td>
-        <td>${load.carrier || "Unassigned"}</td>
-        <td>${load.driver || "Unassigned"} / Unit ${load.truck || "Unassigned"}</td>
+        <td>${broker ? broker.name : load.brokerName || "Unassigned"}</td>
+        <td>${carrier ? carrier.name : load.carrierName || "Unassigned"}</td>
+        <td>${driver ? driver.name : load.driverName || "Unassigned"} / Unit ${truck ? truck.unit : load.truckUnit || "Unassigned"}</td>
         <td>${formatMoney(load.rate)}</td>
         <td><span class="badge ${badgeClass}">${load.status}</span></td>
       </tr>
@@ -63,7 +68,7 @@ function renderDriverOverview(drivers, trucks) {
   }
 
   table.innerHTML = drivers.map(driver => {
-    const truck = trucks.find(t => t.driver === driver.name);
+    const truck = trucks.find(t => t.driverId === driver.id);
 
     return `
       <tr>
