@@ -46,7 +46,45 @@ textarea {
     radial-gradient(circle at bottom left, rgba(30, 136, 229, .22), transparent 36%);
   display: grid;
   place-items: center;
-  padding: 32px;
+  padding: 24px;
+}
+
+.login-container,
+.login-wrap {
+  width: 100%;
+  max-width: 460px;
+}
+
+.login-card {
+  width: 100%;
+  background: rgba(255,255,255,.96);
+  border-radius: 28px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 28px 90px rgba(0,0,0,.28);
+}
+
+.login-logo,
+.login-card img,
+.main-logo {
+  width: 170px;
+  max-width: 78%;
+  height: auto;
+  display: block;
+  margin: 0 auto 18px;
+  border-radius: 18px;
+}
+
+.login-card h1 {
+  color: var(--navy);
+  font-size: 1.85rem;
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+
+.login-card p {
+  color: var(--gray);
+  margin-bottom: 18px;
 }
 
 .portal-shell {
@@ -59,8 +97,7 @@ textarea {
   color: white;
 }
 
-.portal-logo,
-.main-logo {
+.portal-logo {
   width: 260px;
   max-width: 90%;
   margin: 0 auto 28px;
@@ -153,31 +190,6 @@ textarea {
   margin-top: 36px;
   color: rgba(255,255,255,.78);
   font-weight: 800;
-}
-
-.login-wrap {
-  width: 100%;
-  max-width: 500px;
-}
-
-.login-card {
-  background: rgba(255,255,255,.96);
-  border-radius: 34px;
-  padding: 42px;
-  text-align: center;
-  box-shadow: 0 28px 90px rgba(0,0,0,.28);
-}
-
-.login-card h1 {
-  color: var(--navy);
-  font-size: 2.4rem;
-  line-height: 1;
-  margin-bottom: 12px;
-}
-
-.login-card p {
-  color: var(--gray);
-  margin-bottom: 24px;
 }
 
 form {
@@ -547,15 +559,21 @@ td {
   }
 
   .login-card {
-    padding: 32px 22px;
+    padding: 24px 18px;
   }
 
-  .portal-body {
-    padding: 20px;
-  }
-
-  .portal-logo,
+  .login-logo,
+  .login-card img,
   .main-logo {
+    width: 140px;
+  }
+
+  .portal-body,
+  .login-body {
+    padding: 18px;
+  }
+
+  .portal-logo {
     width: 210px;
   }
 }
