@@ -14,115 +14,97 @@
 
 <div class="app-shell">
 
-  <aside class="sidebar">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
 
-    <div class="sidebar-logo">
-      <img src="logo.png" alt="GraniteSky Dispatching">
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a class="active" href="loads.html">Loads</a>
+    <a href="drivers.html">Drivers</a>
+    <a href="trucks.html">Trucks</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="documents.html">Documents</a>
+    <a href="invoices.html">Invoices</a>
+    <a href="settings.html">Settings</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Load Management</h1>
+      <p>Create freight, assign drivers, and track load status.</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Add New Load</h2>
     </div>
 
-    <nav class="sidebar-nav">
-      <a href="dashboard.html">Dashboard</a>
-      <a class="active" href="loads.html?v=2">Loads</a>
-      <a href="#">Carriers</a>
-      <a href="#">Drivers</a>
-      <a href="#">Trucks</a>
-      <a href="#">Documents</a>
-      <a href="#">Invoices</a>
-      <a href="#">Settings</a>
-      <button onclick="logout()">Logout</button>
-    </nav>
+    <form id="loadForm" class="form-grid">
+      <input id="loadNumber" placeholder="Load Number" required>
 
-  </aside>
+      <select id="driver" required>
+        <option value="">Select Driver</option>
+      </select>
 
-  <main class="main-content">
+      <input id="pickup" placeholder="Pickup City, State" required>
+      <input id="delivery" placeholder="Delivery City, State" required>
 
-    <div class="topbar">
-      <div>
-        <h1>Load Management</h1>
-        <p>Create and assign freight to drivers.</p>
-      </div>
+      <input id="pickupDate" type="date">
+      <input id="deliveryDate" type="date">
+
+      <input id="rate" type="number" placeholder="Rate">
+
+      <select id="status">
+        <option>Pickup Today</option>
+        <option>In Transit</option>
+        <option>Delivered</option>
+      </select>
+
+      <textarea id="notes" placeholder="Dispatcher Notes"></textarea>
+
+      <button class="btn-primary" type="submit">Save Load</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Current Loads</h2>
+      <button class="small-btn danger" onclick="clearLoads()">Clear All</button>
     </div>
 
-    <div class="panel">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Load #</th>
+            <th>Lane</th>
+            <th>Driver</th>
+            <th>Truck</th>
+            <th>Pickup</th>
+            <th>Delivery</th>
+            <th>Rate</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-      <div class="panel-header">
-        <h2>Add New Load</h2>
-      </div>
-
-      <form id="loadForm" class="form-grid">
-
-        <input id="loadNumber" placeholder="Load Number" required>
-
-        <select id="driver" required>
-          <option value="">Select Driver</option>
-          <option>John Smith</option>
-          <option>Michael Jones</option>
-          <option>Sarah Davis</option>
-          <option>Unassigned</option>
-        </select>
-
-        <input id="pickup" placeholder="Pickup City, State" required>
-
-        <input id="delivery" placeholder="Delivery City, State" required>
-
-        <input id="pickupDate" type="date">
-
-        <input id="deliveryDate" type="date">
-
-        <input id="rate" type="number" placeholder="Rate">
-
-        <select id="status">
-          <option>Pickup Today</option>
-          <option>In Transit</option>
-          <option>Delivered</option>
-        </select>
-
-        <textarea id="notes" placeholder="Dispatcher Notes"></textarea>
-
-        <button class="btn-primary" type="submit">
-          Save Load
-        </button>
-
-      </form>
-
+        <tbody id="loadsTable">
+          <tr>
+            <td colspan="9">No loads have been added yet.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </section>
 
-    <div class="panel">
-
-      <div class="panel-header">
-        <h2>Current Loads</h2>
-
-        <button class="small-btn danger" onclick="clearLoads()">
-          Clear All
-        </button>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Load #</th>
-              <th>Lane</th>
-              <th>Driver</th>
-              <th>Pickup</th>
-              <th>Delivery</th>
-              <th>Rate</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody id="loadsTable">
-            <tr>
-              <td colspan="8">No loads have been added yet.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-
-  </main>
+</main>
 
 </div>
 
