@@ -1,145 +1,87 @@
-// ==========================================
-// GraniteSky Dispatch Center
-// Dispatch Board Module
-// ==========================================
+// GraniteSky Dispatch Center - Dispatch Board Module with Linked Load Data
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (!document.getElementById("pickupBoard")) return;
 
-    if (!document.getElementById("pickupBoard")) return;
-
-    requireLogin();
-    renderDispatchBoard();
-
+  requireLogin();
+  renderDispatchBoard();
 });
 
-// ==========================================
-
 function renderDispatchBoard() {
+  const loads = getLoads();
 
-    const loads = getLoads();
+  const pickup = document.getElementById("pickupBoard");
+  const transit = document.getElementById("transitBoard");
+  const delivered = document.getElementById("deliveredBoard");
 
-    const pickup = document.getElementById("pickupBoard");
-    const transit = document.getElementById("transitBoard");
-    const delivered = document.getElementById("deliveredBoard");
+  if (!pickup || !transit || !delivered) return;
 
-    if (!pickup || !transit || !delivered) return;
-
-    pickup.innerHTML = "";
-    transit.innerHTML = "";
-    delivered.innerHTML = "";
-
-    loads.forEach((load, index) => {
-
-        const card = createDispatchCard(load, index);
-
-        switch (load.status) {
-
-            case "Pickup Today":
-                pickup.appendChild(card);
-                break;
-
-            case "In Transit":
-                transit.appendChild(card);
-                break;
-
-            case "Delivered":
-                delivered.appendChild(card);
-                break;
-
-            default:
-                pickup.appendChild(card);
-
-        }
-
-    });
-
-    if (!pickup.innerHTML)
-        pickup.innerHTML = "<p>No pickup loads.</p>";
-
-    if (!transit.innerHTML)
-        transit.innerHTML = "<p>No loads in transit.</p>";
-
-    if (!delivered.innerHTML)
-        delivered.innerHTML = "<p>No delivered loads.</p>";
-
+  pickup.innerHTML = renderBoardCards(loads.filter(load => load.status === "Pickup Today"), "No pickup loads.");
+  transit.innerHTML = renderBoardCards(loads.filter(load => load.status === "In Transit"), "No loads in transit.");
+  delivered.innerHTML = renderBoardCards(loads.filter(load => load.status === "Delivered"), "No delivered loads.");
 }
 
-// ==========================================
+function renderBoardCards(loads, emptyMessage) {
+  if (loads.length === 0) {
+    return `<p class="empty-board">${emptyMessage}</p>`;
+  }
 
-function createDispatchCard(load, index) {
+  return loads.map((load, index) => {
+    const broker = getCompanies().find(company => company.id === load.brokerId);
+    const carrier = getCarriers().find(carrier => carrier.id === load.carrierId);
+    const driver = getDrivers().find(driver => driver.id === load.driverId);
+    const truck = getTrucks().find(truck => truck.id === load.truckId);
 
-    const card = document.createElement("div");
+    return `
+      <div class="dispatch-card">
+        <strong>${load.loadNumber}</strong>
 
-    card.className = "dispatch-card";
+        <p>${load.pickup} → ${load.delivery}</p>
 
-    card.innerHTML = `
+        <small>Broker: ${broker ? broker.name : load.brokerName || "Unassigned"}</small><br>
+        <small>Carrier: ${carrier ? carrier.name : load.carrierName || "Unassigned"}</small><br>
+        <small>Driver: ${driver ? driver.name : load.driverName || "Unassigned"}</small><br>
+        <small>Truck: Unit ${truck ? truck.unit : load.truckUnit || "Unassigned"}</small><br>
+        <small>Pickup: ${formatDate(load.pickupDate)}</small><br>
+        <small>Delivery: ${formatDate(load.deliveryDate)}</small><br>
+        <small>Rate: ${formatMoney(load.rate)}</small>
 
-        <h3>${load.loadNumber}</h3>
-
-        <p><strong>Driver:</strong> ${load.driver || "Unassigned"}</p>
-
-        <p><strong>Truck:</strong> ${load.truck || "Unassigned"}</p>
-
-        <p><strong>Lane:</strong><br>
-        ${load.pickup} → ${load.delivery}</p>
-
-        <p><strong>Pickup:</strong> ${formatDate(load.pickupDate)}</p>
-
-        <p><strong>Delivery:</strong> ${formatDate(load.deliveryDate)}</p>
-
-        <p><strong>Revenue:</strong> ${formatMoney(load.rate)}</p>
-
-        <div class="actions">
-
-            <button
-            class="small-btn"
-            onclick="advanceLoad(${index})">
-
-            Advance
-
-            </button>
-
-            <button
-            class="small-btn danger"
-            onclick="deleteLoad(${index})">
-
-            Delete
-
-            </button>
-
+        <div class="actions" style="margin-top:12px;">
+          <button class="small-btn" onclick="advanceLoad('${load.id}')">Advance</button>
+          <button class="small-btn danger" onclick="deleteBoardLoad('${load.id}')">Delete</button>
         </div>
-
+      </div>
     `;
-
-    return card;
-
+  }).join("");
 }
 
-// ==========================================
+function advanceLoad(loadId) {
+  const loads = getLoads();
+  const load = loads.find(item => item.id === loadId);
 
-function advanceLoad(index) {
+  if (!load) return;
 
-    const loads = getLoads();
+  if (load.status === "Pickup Today") {
+    load.status = "In Transit";
+  } else if (load.status === "In Transit") {
+    load.status = "Delivered";
+  } else {
+    load.status = "Delivered";
+  }
 
-    switch (loads[index].status) {
+  saveLoads(loads);
+  renderDispatchBoard();
 
-        case "Pickup Today":
-            loads[index].status = "In Transit";
-            break;
+  showNotification("Load status updated.");
+}
 
-        case "In Transit":
-            loads[index].status = "Delivered";
-            break;
+function deleteBoardLoad(loadId) {
+  if (!confirmDelete("load")) return;
 
-        default:
-            loads[index].status = "Delivered";
+  const loads = getLoads().filter(load => load.id !== loadId);
+  saveLoads(loads);
 
-    }
+  renderDispatchBoard();
 
-    saveLoads(loads);
-
-    renderDispatchBoard();
-
-    showNotification("Load updated.");
-
+  showNotification("Load deleted.", "#dc2626");
 }
