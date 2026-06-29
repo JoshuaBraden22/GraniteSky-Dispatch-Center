@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Dispatch Board Module with Linked Load Data
+// GraniteSky Dispatch Center - Dispatch Board Module with View Load Links
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("pickupBoard")) return;
@@ -26,7 +26,7 @@ function renderBoardCards(loads, emptyMessage) {
     return `<p class="empty-board">${emptyMessage}</p>`;
   }
 
-  return loads.map((load, index) => {
+  return loads.map(load => {
     const broker = getCompanies().find(company => company.id === load.brokerId);
     const carrier = getCarriers().find(carrier => carrier.id === load.carrierId);
     const driver = getDrivers().find(driver => driver.id === load.driverId);
@@ -47,6 +47,7 @@ function renderBoardCards(loads, emptyMessage) {
         <small>Rate: ${formatMoney(load.rate)}</small>
 
         <div class="actions" style="margin-top:12px;">
+          <a class="small-btn" href="load-details.html?id=${load.id}">View</a>
           <button class="small-btn" onclick="advanceLoad('${load.id}')">Advance</button>
           <button class="small-btn danger" onclick="deleteBoardLoad('${load.id}')">Delete</button>
         </div>
