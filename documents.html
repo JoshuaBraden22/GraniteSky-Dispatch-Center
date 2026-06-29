@@ -7,10 +7,14 @@
 <title>Documents | GraniteSky Dispatch Center</title>
 
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/documents.js"></script>
 </head>
 
-<body onload="requireLogin(); populateDocumentLoadDropdown(); renderDocuments();">
+<body>
 
 <div class="app-shell">
 
@@ -27,7 +31,7 @@
     <a href="trucks.html">Trucks</a>
     <a href="companies.html">Companies</a>
     <a href="carriers.html">Carriers</a>
-    <a class="active" href="documents.html">Documents</a>
+    <a href="documents.html" class="active">Documents</a>
     <a href="calendar.html">Calendar</a>
     <a href="messages.html">Messages</a>
     <a href="accounting.html">Accounting</a>
@@ -40,7 +44,7 @@
   <div class="topbar">
     <div>
       <h1>Documents</h1>
-      <p>Organize rate confirmations, BOLs, PODs, receipts, and load paperwork.</p>
+      <p>Track rate confirmations, BOLs, PODs, receipts, invoices, and load paperwork.</p>
     </div>
   </div>
 
@@ -50,7 +54,6 @@
     </div>
 
     <form id="documentForm" class="form-grid">
-
       <select id="documentLoad">
         <option value="">Attach to Load</option>
       </select>
@@ -69,7 +72,7 @@
       <input id="documentName" placeholder="Document Name" required>
       <input id="documentFile" type="file">
 
-      <textarea id="documentNotes" placeholder="Document notes"></textarea>
+      <textarea id="documentNotes" placeholder="Document Notes"></textarea>
 
       <button class="btn-primary" type="submit">Save Document</button>
     </form>
@@ -96,7 +99,7 @@
 
         <tbody id="documentsTable">
           <tr>
-            <td colspan="6">No documents have been added yet.</td>
+            <td colspan="6">No documents added yet.</td>
           </tr>
         </tbody>
       </table>
