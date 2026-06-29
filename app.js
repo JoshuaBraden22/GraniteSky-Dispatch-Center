@@ -68,7 +68,7 @@ function showUserName() {
   }
 }
 
-// STORAGE HELPERS
+// STORAGE
 
 function getData(key) {
   return JSON.parse(localStorage.getItem(key)) || [];
@@ -100,14 +100,6 @@ function getTrucks() {
 
 function saveTrucks(trucks) {
   saveData("gsTrucks", trucks);
-}
-
-function getCarriers() {
-  return getData("gsCarriers");
-}
-
-function saveCarriers(carriers) {
-  saveData("gsCarriers", carriers);
 }
 
 // DRIVERS
@@ -157,9 +149,7 @@ function renderDrivers() {
       <td>${driver.truck || "-"}</td>
       <td>${driver.equipment || "-"}</td>
       <td>${driver.status}</td>
-      <td>
-        <button class="small-btn danger" onclick="deleteDriver(${index})">Delete</button>
-      </td>
+      <td><button class="small-btn danger" onclick="deleteDriver(${index})">Delete</button></td>
     </tr>
   `).join("");
 }
@@ -171,6 +161,7 @@ function deleteDriver(index) {
   drivers.splice(index, 1);
   saveDrivers(drivers);
   renderDrivers();
+  renderDashboard();
 }
 
 function clearDrivers() {
@@ -178,9 +169,109 @@ function clearDrivers() {
 
   localStorage.removeItem("gsDrivers");
   renderDrivers();
+  renderDashboard();
 }
 
-// LOAD DROPDOWNS
+// TRUCK DRIVER DROPDOWN
+
+function populateTruckDriverDropdown() {
+  const dropdown = document.getElementById("truckDriver");
+  if (!dropdown) return;
+
+  const drivers = getDrivers();
+
+  dropdown.innerHTML = `<option value="">Assign Driver</option>`;
+
+  drivers.forEach(driver => {
+    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+  });
+
+  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+}
+
+// TRUCKS
+
+const truckForm = document.getElementById("truckForm");
+
+if (truckForm) {
+  populateTruckDriverDropdown();
+
+  truckForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const trucks = getTrucks();
+
+    const truck = {
+      unit: document.getElementById("truckUnit").value.trim(),
+      vin: document.getElementById("truckVin").value.trim(),
+      year: document.getElementById("truckYear").value.trim(),
+      make: document.getElementById("truckMake").value.trim(),
+      model: document.getElementById("truckModel").value.trim(),
+      plate: document.getElementById("truckPlate").value.trim(),
+      state: document.getElementById("truckState").value.trim(),
+      trailer: document.getElementById("trailerNumber").value.trim(),
+      equipment: document.getElementById("truckEquipment").value.trim(),
+      driver: document.getElementById("truckDriver").value,
+      status: document.getElementById("truckStatus").value,
+      notes: document.getElementById("truckNotes").value.trim()
+    };
+
+    trucks.unshift(truck);
+    saveTrucks(trucks);
+
+    truckForm.reset();
+    populateTruckDriverDropdown();
+    renderTrucks();
+    renderDashboard();
+  });
+}
+
+function renderTrucks() {
+  populateTruckDriverDropdown();
+
+  const table = document.getElementById("trucksTable");
+  if (!table) return;
+
+  const trucks = getTrucks();
+
+  if (trucks.length === 0) {
+    table.innerHTML = `<tr><td colspan="8">No trucks have been added yet.</td></tr>`;
+    return;
+  }
+
+  table.innerHTML = trucks.map((truck, index) => `
+    <tr>
+      <td>${truck.unit}</td>
+      <td>${truck.year || ""} ${truck.make || ""} ${truck.model || ""}</td>
+      <td>${truck.plate || "-"} ${truck.state ? "(" + truck.state + ")" : ""}</td>
+      <td>${truck.trailer || "-"}</td>
+      <td>${truck.equipment || "-"}</td>
+      <td>${truck.driver || "Unassigned"}</td>
+      <td>${truck.status}</td>
+      <td><button class="small-btn danger" onclick="deleteTruck(${index})">Delete</button></td>
+    </tr>
+  `).join("");
+}
+
+function deleteTruck(index) {
+  if (!confirm("Delete this truck?")) return;
+
+  const trucks = getTrucks();
+  trucks.splice(index, 1);
+  saveTrucks(trucks);
+  renderTrucks();
+  renderDashboard();
+}
+
+function clearTrucks() {
+  if (!confirm("Clear all trucks?")) return;
+
+  localStorage.removeItem("gsTrucks");
+  renderTrucks();
+  renderDashboard();
+}
+
+// LOAD DRIVER DROPDOWN
 
 function populateDriverDropdown() {
   const dropdown = document.getElementById("driver");
@@ -191,7 +282,9 @@ function populateDriverDropdown() {
   dropdown.innerHTML = `<option value="">Select Driver</option>`;
 
   drivers.forEach(driver => {
-    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+    const truck = getTrucks().find(t => t.driver === driver.name);
+    const truckInfo = truck ? ` — Unit ${truck.unit}` : "";
+    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}${truckInfo}</option>`;
   });
 
   dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
@@ -207,11 +300,15 @@ if (loadForm) {
   loadForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
+    const selectedDriver = document.getElementById("driver").value;
+    const assignedTruck = getTrucks().find(t => t.driver === selectedDriver);
+
     const loads = getLoads();
 
     const load = {
       loadNumber: document.getElementById("loadNumber").value.trim(),
-      driver: document.getElementById("driver").value,
+      driver: selectedDriver,
+      truck: assignedTruck ? assignedTruck.unit : "Unassigned",
       pickup: document.getElementById("pickup").value.trim(),
       delivery: document.getElementById("delivery").value.trim(),
       pickupDate: document.getElementById("pickupDate").value,
@@ -227,6 +324,7 @@ if (loadForm) {
     loadForm.reset();
     populateDriverDropdown();
     renderLoads();
+    renderDashboard();
   });
 }
 
@@ -239,7 +337,7 @@ function renderLoads() {
   const loads = getLoads();
 
   if (loads.length === 0) {
-    table.innerHTML = `<tr><td colspan="8">No loads added yet.</td></tr>`;
+    table.innerHTML = `<tr><td colspan="9">No loads added yet.</td></tr>`;
     return;
   }
 
@@ -254,6 +352,7 @@ function renderLoads() {
         <td>${load.loadNumber}</td>
         <td>${load.pickup} → ${load.delivery}</td>
         <td>${load.driver || "Unassigned"}</td>
+        <td>${load.truck || "Unassigned"}</td>
         <td>${load.pickupDate || "-"}</td>
         <td>${load.deliveryDate || "-"}</td>
         <td>$${Number(load.rate || 0).toLocaleString()}</td>
@@ -309,45 +408,61 @@ function clearLoads() {
 function renderDashboard() {
   const loads = getLoads();
   const drivers = getDrivers();
+  const trucks = getTrucks();
 
   const revenue = loads.reduce((total, load) => total + Number(load.rate || 0), 0);
-  const inTransit = loads.filter(load => load.status === "In Transit").length;
   const delivered = loads.filter(load => load.status === "Delivered").length;
 
   const revenueBox = document.getElementById("dashboardRevenue");
   const loadsBox = document.getElementById("dashboardLoads");
-  const transitBox = document.getElementById("dashboardTransit");
-  const deliveredBox = document.getElementById("dashboardDelivered");
   const driversBox = document.getElementById("dashboardDrivers");
+  const deliveredBox = document.getElementById("dashboardDelivered");
   const recentTable = document.getElementById("dashboardRecentLoads");
+  const driversTable = document.getElementById("dashboardDriversTable");
 
   if (revenueBox) revenueBox.textContent = "$" + revenue.toLocaleString();
   if (loadsBox) loadsBox.textContent = loads.length;
-  if (transitBox) transitBox.textContent = inTransit;
-  if (deliveredBox) deliveredBox.textContent = delivered;
   if (driversBox) driversBox.textContent = drivers.length;
+  if (deliveredBox) deliveredBox.textContent = delivered;
 
-  if (!recentTable) return;
+  if (recentTable) {
+    if (loads.length === 0) {
+      recentTable.innerHTML = `<tr><td colspan="5">No loads added yet.</td></tr>`;
+    } else {
+      recentTable.innerHTML = loads.slice(0, 5).map(load => {
+        const badgeClass =
+          load.status === "Delivered" ? "delivered" :
+          load.status === "In Transit" ? "transit" :
+          "pickup";
 
-  if (loads.length === 0) {
-    recentTable.innerHTML = `<tr><td colspan="5">No loads added yet.</td></tr>`;
-    return;
+        return `
+          <tr>
+            <td>${load.loadNumber}</td>
+            <td>${load.pickup} → ${load.delivery}</td>
+            <td>${load.driver || "Unassigned"} / Unit ${load.truck || "Unassigned"}</td>
+            <td>$${Number(load.rate || 0).toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${load.status}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
   }
 
-  recentTable.innerHTML = loads.slice(0, 5).map(load => {
-    const badgeClass =
-      load.status === "Delivered" ? "delivered" :
-      load.status === "In Transit" ? "transit" :
-      "pickup";
+  if (driversTable) {
+    if (drivers.length === 0) {
+      driversTable.innerHTML = `<tr><td colspan="3">No drivers added yet.</td></tr>`;
+    } else {
+      driversTable.innerHTML = drivers.map(driver => {
+        const truck = trucks.find(t => t.driver === driver.name);
 
-    return `
-      <tr>
-        <td>${load.loadNumber}</td>
-        <td>${load.pickup} → ${load.delivery}</td>
-        <td>${load.driver || "Unassigned"}</td>
-        <td>$${Number(load.rate || 0).toLocaleString()}</td>
-        <td><span class="badge ${badgeClass}">${load.status}</span></td>
-      </tr>
-    `;
-  }).join("");
+        return `
+          <tr>
+            <td>${driver.name}</td>
+            <td>${truck ? "Unit " + truck.unit : "Unassigned"}</td>
+            <td>${driver.status}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+  }
 }
