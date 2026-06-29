@@ -37,26 +37,33 @@ textarea {
   font: inherit;
 }
 
-.login-body {
+/* LOGIN + PORTAL */
+
+.login-body,
+.portal-body {
   min-height: 100vh;
   background:
     linear-gradient(135deg, rgba(7,23,40,.95), rgba(15,39,71,.82)),
-    radial-gradient(circle at top right, rgba(114,198,255,.3), transparent 35%);
+    radial-gradient(circle at top right, rgba(114,198,255,.35), transparent 35%),
+    radial-gradient(circle at bottom left, rgba(30,136,229,.22), transparent 38%);
   display: grid;
   place-items: center;
   padding: 24px;
 }
 
-.login-wrap {
+.login-wrap,
+.portal-page {
   width: 100%;
-  max-width: 460px;
+  max-width: 620px;
 }
 
-.login-card {
-  background: rgba(255,255,255,.96);
-  border-radius: 28px;
-  padding: 38px;
-  box-shadow: var(--shadow);
+.login-card,
+.portal-card {
+  background: rgba(255,255,255,.95);
+  border-radius: 34px;
+  padding: 46px;
+  text-align: center;
+  box-shadow: 0 28px 90px rgba(0,0,0,.28);
 }
 
 .main-logo {
@@ -67,20 +74,41 @@ textarea {
   margin: 0 auto 26px;
 }
 
-.center-card {
-  text-align: center;
-}
-
-.login-card h1 {
+.login-card h1,
+.portal-card h1 {
   color: var(--navy);
-  font-size: 2rem;
-  line-height: 1.05;
-  margin-bottom: 10px;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1;
+  margin-bottom: 14px;
 }
 
-.login-card p {
+.login-card p,
+.portal-text {
   color: var(--gray);
-  margin-bottom: 22px;
+  font-size: 1.05rem;
+  margin-bottom: 24px;
+}
+
+.portal-eyebrow {
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 900;
+  font-size: .8rem;
+  margin-bottom: 12px;
+}
+
+.portal-footer {
+  margin-top: 26px;
+  color: var(--navy);
+  font-weight: 800;
+  font-size: .95rem;
+}
+
+.portal-buttons {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
 }
 
 form {
@@ -130,24 +158,7 @@ textarea:focus {
   background: linear-gradient(135deg, var(--navy), var(--blue));
 }
 
-.portal-buttons {
-  display: grid;
-  gap: 14px;
-  margin-top: 24px;
-}
-
-.demo-logins {
-  margin-top: 24px;
-  padding: 16px;
-  border-radius: 16px;
-  background: var(--soft);
-  border: 1px solid var(--line);
-}
-
-.demo-logins p {
-  margin: 4px 0;
-  font-size: .9rem;
-}
+/* APP LAYOUT */
 
 .app-shell {
   display: grid;
@@ -358,6 +369,8 @@ td {
   background: var(--danger);
 }
 
+/* MOBILE */
+
 @media (max-width: 950px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -394,6 +407,11 @@ td {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .login-card,
+  .portal-card {
+    padding: 32px 22px;
   }
 
   .main-logo {
