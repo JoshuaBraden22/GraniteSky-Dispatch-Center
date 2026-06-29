@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,13 +9,19 @@
 <title>Carriers | GraniteSky Dispatch Center</title>
 
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/carriers.js"></script>
 
 </head>
 
-<body onload="requireLogin(); renderCarriers();">
+<body>
 
 <div class="app-shell">
+
+<!-- Sidebar -->
 
 <aside class="sidebar">
 
@@ -36,7 +43,7 @@
 
 <a href="companies.html">Companies</a>
 
-<a class="active" href="carriers.html">Carriers</a>
+<a href="carriers.html" class="active">Carriers</a>
 
 <a href="documents.html">Documents</a>
 
@@ -54,6 +61,8 @@ Logout
 
 </aside>
 
+<!-- Main Content -->
+
 <main class="main-content">
 
 <div class="topbar">
@@ -63,12 +72,14 @@ Logout
 <h1>Carrier Management</h1>
 
 <p>
-Store every carrier you dispatch.
+Manage every carrier you dispatch, along with their authority, insurance, and contact information.
 </p>
 
 </div>
 
 </div>
+
+<!-- Add Carrier -->
 
 <section class="panel">
 
@@ -95,7 +106,7 @@ placeholder="DOT Number">
 
 <input
 id="carrierContact"
-placeholder="Contact Person">
+placeholder="Primary Contact">
 
 <input
 id="carrierPhone"
@@ -106,8 +117,8 @@ id="carrierEmail"
 placeholder="Email Address">
 
 <input
-id="carrierInsurance"
-type="date">
+type="date"
+id="carrierInsurance">
 
 <select id="carrierStatus">
 
@@ -116,6 +127,8 @@ type="date">
 <option>Inactive</option>
 
 <option>Pending</option>
+
+<option>Suspended</option>
 
 </select>
 
@@ -135,11 +148,13 @@ Save Carrier
 
 </section>
 
+<!-- Carrier Table -->
+
 <section class="panel">
 
 <div class="panel-header">
 
-<h2>Saved Carriers</h2>
+<h2>Carrier Directory</h2>
 
 <button
 class="small-btn danger"
@@ -171,7 +186,7 @@ Clear All
 
 <th>Email</th>
 
-<th>Insurance</th>
+<th>Insurance Exp.</th>
 
 <th>Status</th>
 
@@ -206,4 +221,5 @@ No carriers have been added yet.
 </div>
 
 </body>
+
 </html>
