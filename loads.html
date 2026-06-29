@@ -1,1 +1,132 @@
+const defaultLoads = [
+  {
+    loadNumber: "GS-1024",
+    driver: "John Smith",
+    pickup: "Tulsa, OK",
+    delivery: "Dallas, TX",
+    pickupDate: "2026-06-28",
+    deliveryDate: "2026-06-29",
+    rate: "1850",
+    status: "In Transit",
+    notes: "Check call completed."
+  },
+  {
+    loadNumber: "GS-1025",
+    driver: "Michael Jones",
+    pickup: "Oklahoma City, OK",
+    delivery: "Denver, CO",
+    pickupDate: "2026-06-28",
+    deliveryDate: "2026-06-30",
+    rate: "2400",
+    status: "Pickup Today",
+    notes: "Pickup appointment at 9:00 AM."
+  }
+];
 
+function getLoads() {
+  const saved = localStorage.getItem("gsLoads");
+
+  if (saved) {
+    return JSON.parse(saved);
+  }
+
+  localStorage.setItem("gsLoads", JSON.stringify(defaultLoads));
+  return defaultLoads;
+}
+
+function saveLoads(loads) {
+  localStorage.setItem("gsLoads", JSON.stringify(loads));
+}
+
+const loadForm = document.getElementById("loadForm");
+
+if (loadForm) {
+  loadForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const loads = getLoads();
+
+    const newLoad = {
+      loadNumber: document.getElementById("loadNumber").value,
+      driver: document.getElementById("driver").value,
+      pickup: document.getElementById("pickup").value,
+      delivery: document.getElementById("delivery").value,
+      pickupDate: document.getElementById("pickupDate").value,
+      deliveryDate: document.getElementById("deliveryDate").value,
+      rate: document.getElementById("rate").value,
+      status: document.getElementById("status").value,
+      notes: document.getElementById("notes").value
+    };
+
+    loads.unshift(newLoad);
+    saveLoads(loads);
+
+    loadForm.reset();
+    renderLoads();
+  });
+}
+
+function renderLoads() {
+  const table = document.getElementById("loadsTable");
+  if (!table) return;
+
+  const loads = getLoads();
+
+  table.innerHTML = loads.map((load, index) => {
+    const badgeClass =
+      load.status === "Delivered" ? "delivered" :
+      load.status === "In Transit" ? "transit" :
+      "pickup";
+
+    return `
+      <tr>
+        <td>${load.loadNumber}</td>
+        <td>${load.pickup} → ${load.delivery}</td>
+        <td>${load.driver}</td>
+        <td>${load.pickupDate}</td>
+        <td>${load.deliveryDate}</td>
+        <td>$${Number(load.rate).toLocaleString()}</td>
+        <td><span class="badge ${badgeClass}">${load.status}</span></td>
+        <td>
+          <div class="actions">
+            <button class="small-btn" onclick="updateLoadStatus(${index})">Update</button>
+            <button class="small-btn danger" onclick="deleteLoad(${index})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function updateLoadStatus(index) {
+  const loads = getLoads();
+
+  const current = loads[index].status;
+
+  if (current === "Pickup Today") {
+    loads[index].status = "In Transit";
+  } else if (current === "In Transit") {
+    loads[index].status = "Delivered";
+  } else {
+    loads[index].status = "Pickup Today";
+  }
+
+  saveLoads(loads);
+  renderLoads();
+}
+
+function deleteLoad(index) {
+  if (!confirm("Delete this load?")) return;
+
+  const loads = getLoads();
+  loads.splice(index, 1);
+  saveLoads(loads);
+  renderLoads();
+}
+
+function clearLoads() {
+  if (!confirm("Reset demo loads? This will remove all saved loads.")) return;
+
+  localStorage.removeItem("gsLoads");
+  renderLoads();
+}
