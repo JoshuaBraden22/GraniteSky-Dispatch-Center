@@ -1,10 +1,14 @@
-// GraniteSky Dispatch Center - Loads Module
+// GraniteSky Dispatch Center - Upgraded Loads Module
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("loadForm")) return;
 
   requireLogin();
+
+  populateCompanyDropdown();
+  populateCarrierDropdown();
   populateDriverDropdown();
+  populateTruckDropdown();
   renderLoads();
 
   const loadForm = document.getElementById("loadForm");
@@ -12,45 +16,104 @@ document.addEventListener("DOMContentLoaded", () => {
   loadForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const selectedDriver = document.getElementById("driver").value;
-    const assignedTruck = getTrucks().find(t => t.driver === selectedDriver);
-
     const loads = getLoads();
 
+    const selectedDriver = getValue("driver");
+    const selectedTruck = getValue("truck");
+
     const load = {
-      loadNumber: document.getElementById("loadNumber").value.trim(),
+      loadNumber: getValue("loadNumber"),
+      broker: getValue("broker"),
+      carrier: getValue("carrier"),
       driver: selectedDriver,
-      truck: assignedTruck ? assignedTruck.unit : "Unassigned",
-      pickup: document.getElementById("pickup").value.trim(),
-      delivery: document.getElementById("delivery").value.trim(),
-      pickupDate: document.getElementById("pickupDate").value,
-      deliveryDate: document.getElementById("deliveryDate").value,
-      rate: document.getElementById("rate").value,
-      status: document.getElementById("status").value,
-      notes: document.getElementById("notes").value.trim()
+      truck: selectedTruck,
+      pickup: getValue("pickup"),
+      delivery: getValue("delivery"),
+      pickupDate: getValue("pickupDate"),
+      deliveryDate: getValue("deliveryDate"),
+      commodity: getValue("commodity"),
+      weight: getValue("weight"),
+      miles: getValue("miles"),
+      rate: getValue("rate"),
+      status: getValue("status"),
+      notes: getValue("notes")
     };
 
     loads.unshift(load);
     saveLoads(loads);
 
     loadForm.reset();
+
+    populateCompanyDropdown();
+    populateCarrierDropdown();
     populateDriverDropdown();
+    populateTruckDropdown();
     renderLoads();
 
     showNotification("Load saved successfully.");
   });
 });
 
+function getValue(id) {
+  const element = document.getElementById(id);
+  return element ? element.value.trim() : "";
+}
+
+function populateCompanyDropdown() {
+  const dropdown = document.getElementById("broker");
+  if (!dropdown) return;
+
+  const companies = getCompanies();
+
+  dropdown.innerHTML = `<option value="">Select Broker / Customer</option>`;
+
+  companies.forEach(company => {
+    dropdown.innerHTML += `<option value="${company.name}">${company.name} (${company.type})</option>`;
+  });
+
+  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+}
+
+function populateCarrierDropdown() {
+  const dropdown = document.getElementById("carrier");
+  if (!dropdown) return;
+
+  const carriers = getCarriers();
+
+  dropdown.innerHTML = `<option value="">Select Carrier</option>`;
+
+  carriers.forEach(carrier => {
+    dropdown.innerHTML += `<option value="${carrier.name}">${carrier.name}</option>`;
+  });
+
+  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+}
+
 function populateDriverDropdown() {
   const dropdown = document.getElementById("driver");
   if (!dropdown) return;
 
+  const drivers = getDrivers();
+
   dropdown.innerHTML = `<option value="">Select Driver</option>`;
 
-  getDrivers().forEach(driver => {
-    const truck = getTrucks().find(t => t.driver === driver.name);
-    const truckInfo = truck ? ` — Unit ${truck.unit}` : "";
-    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}${truckInfo}</option>`;
+  drivers.forEach(driver => {
+    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+  });
+
+  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+}
+
+function populateTruckDropdown() {
+  const dropdown = document.getElementById("truck");
+  if (!dropdown) return;
+
+  const trucks = getTrucks();
+
+  dropdown.innerHTML = `<option value="">Select Truck</option>`;
+
+  trucks.forEach(truck => {
+    dropdown.innerHTML += `<option value="${truck.unit}">Unit ${truck.unit} - ${truck.make || ""} ${truck.model || ""}</option>`;
   });
 
   dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
@@ -63,7 +126,7 @@ function renderLoads() {
   const loads = getLoads();
 
   if (loads.length === 0) {
-    table.innerHTML = `<tr><td colspan="9">No loads added yet.</td></tr>`;
+    table.innerHTML = `<tr><td colspan="11">No loads added yet.</td></tr>`;
     return;
   }
 
@@ -76,6 +139,8 @@ function renderLoads() {
     return `
       <tr>
         <td>${load.loadNumber}</td>
+        <td>${load.broker || "Unassigned"}</td>
+        <td>${load.carrier || "Unassigned"}</td>
         <td>${load.pickup} → ${load.delivery}</td>
         <td>${load.driver || "Unassigned"}</td>
         <td>${load.truck || "Unassigned"}</td>
@@ -107,6 +172,8 @@ function updateLoadStatus(index) {
 
   saveLoads(loads);
   renderLoads();
+
+  showNotification("Load status updated.");
 }
 
 function deleteLoad(index) {
