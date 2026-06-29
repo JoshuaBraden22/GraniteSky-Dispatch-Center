@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Drivers Module
+// GraniteSky Dispatch Center - Drivers Module with IDs
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("driverForm")) return;
@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const drivers = getDrivers();
 
     const driver = {
+      id: generateId("driver"),
       name: document.getElementById("driverName").value.trim(),
       phone: document.getElementById("driverPhone").value.trim(),
       email: document.getElementById("driverEmail").value.trim(),
