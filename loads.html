@@ -1,112 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Loads | GraniteSky Dispatch Center</title>
 
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/loads.js"></script>
+
 </head>
 
-<body onload="requireLogin(); showUserName(); renderLoads();">
+<body>
 
 <div class="app-shell">
 
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <img src="logo.png" alt="GraniteSky Dispatching">
-  </div>
+<!-- Sidebar -->
 
-  <nav class="sidebar-nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a class="active" href="loads.html">Loads</a>
-    <a href="drivers.html">Drivers</a>
-    <a href="trucks.html">Trucks</a>
-    <a href="carriers.html">Carriers</a>
-    <a href="documents.html">Documents</a>
-    <a href="invoices.html">Invoices</a>
-    <a href="settings.html">Settings</a>
-    <button onclick="logout()">Logout</button>
-  </nav>
+<aside class="sidebar">
+
+<div class="sidebar-logo">
+<img src="logo.png" alt="GraniteSky Dispatching">
+</div>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html">Dashboard</a>
+
+<a href="loads.html" class="active">Loads</a>
+
+<a href="dispatch-board.html">Dispatch Board</a>
+
+<a href="drivers.html">Drivers</a>
+
+<a href="trucks.html">Trucks</a>
+
+<a href="companies.html">Companies</a>
+
+<a href="carriers.html">Carriers</a>
+
+<a href="documents.html">Documents</a>
+
+<a href="calendar.html">Calendar</a>
+
+<a href="messages.html">Messages</a>
+
+<a href="accounting.html">Accounting</a>
+
+<button onclick="logout()">
+Logout
+</button>
+
+</nav>
+
 </aside>
+
+<!-- Main -->
 
 <main class="main-content">
 
-  <div class="topbar">
-    <div>
-      <h1>Load Management</h1>
-      <p>Create freight, assign drivers, and track load status.</p>
-    </div>
-  </div>
+<div class="topbar">
 
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Add New Load</h2>
-    </div>
+<div>
 
-    <form id="loadForm" class="form-grid">
-      <input id="loadNumber" placeholder="Load Number" required>
+<h1>Load Management</h1>
 
-      <select id="driver" required>
-        <option value="">Select Driver</option>
-      </select>
+<p>
+Create, assign and manage freight loads.
+</p>
 
-      <input id="pickup" placeholder="Pickup City, State" required>
-      <input id="delivery" placeholder="Delivery City, State" required>
+</div>
 
-      <input id="pickupDate" type="date">
-      <input id="deliveryDate" type="date">
+</div>
 
-      <input id="rate" type="number" placeholder="Rate">
+<!-- Add Load -->
 
-      <select id="status">
-        <option>Pickup Today</option>
-        <option>In Transit</option>
-        <option>Delivered</option>
-      </select>
+<section class="panel">
 
-      <textarea id="notes" placeholder="Dispatcher Notes"></textarea>
+<div class="panel-header">
 
-      <button class="btn-primary" type="submit">Save Load</button>
-    </form>
-  </section>
+<h2>Create New Load</h2>
 
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Current Loads</h2>
-      <button class="small-btn danger" onclick="clearLoads()">Clear All</button>
-    </div>
+</div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Load #</th>
-            <th>Lane</th>
-            <th>Driver</th>
-            <th>Truck</th>
-            <th>Pickup</th>
-            <th>Delivery</th>
-            <th>Rate</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+<form id="loadForm" class="form-grid">
 
-        <tbody id="loadsTable">
-          <tr>
-            <td colspan="9">No loads have been added yet.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+<input
+id="loadNumber"
+placeholder="Load Number"
+required>
+
+<select id="driver">
+<option value="">Select Driver</option>
+</select>
+
+<input
+id="pickup"
+placeholder="Pickup City"
+required>
+
+<input
+id="delivery"
+placeholder="Delivery City"
+required>
+
+<input
+type="date"
+id="pickupDate">
+
+<input
+type="date"
+id="deliveryDate">
+
+<input
+type="number"
+id="rate"
+placeholder="Load Rate">
+
+<select id="status">
+
+<option>Pickup Today</option>
+
+<option>In Transit</option>
+
+<option>Delivered</option>
+
+</select>
+
+<textarea
+id="notes"
+placeholder="Dispatch Notes"></textarea>
+
+<button
+class="btn-primary"
+type="submit">
+
+Save Load
+
+</button>
+
+</form>
+
+</section>
+
+<!-- Load Table -->
+
+<section class="panel">
+
+<div class="panel-header">
+
+<h2>Current Loads</h2>
+
+<button
+class="small-btn danger"
+onclick="clearLoads()">
+
+Clear All
+
+</button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Load #</th>
+
+<th>Lane</th>
+
+<th>Driver</th>
+
+<th>Truck</th>
+
+<th>Pickup</th>
+
+<th>Delivery</th>
+
+<th>Rate</th>
+
+<th>Status</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="loadsTable">
+
+<tr>
+
+<td colspan="9">
+
+No loads have been created yet.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
 
 </main>
 
 </div>
 
 </body>
+
 </html>
