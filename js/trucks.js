@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Trucks Module
+// GraniteSky Dispatch Center - Trucks Module with Driver IDs
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("truckForm")) return;
@@ -13,8 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const trucks = getTrucks();
+    const selectedDriverId = document.getElementById("truckDriver").value;
+    const selectedDriver = getDrivers().find(driver => driver.id === selectedDriverId);
 
     const truck = {
+      id: generateId("truck"),
       unit: document.getElementById("truckUnit").value.trim(),
       vin: document.getElementById("truckVin").value.trim(),
       year: document.getElementById("truckYear").value.trim(),
@@ -24,7 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
       state: document.getElementById("truckState").value.trim(),
       trailer: document.getElementById("trailerNumber").value.trim(),
       equipment: document.getElementById("truckEquipment").value.trim(),
-      driver: document.getElementById("truckDriver").value,
+      driverId: selectedDriverId,
+      driverName: selectedDriver ? selectedDriver.name : "Unassigned",
       status: document.getElementById("truckStatus").value,
       notes: document.getElementById("truckNotes").value.trim()
     };
@@ -49,10 +53,10 @@ function populateTruckDriverDropdown() {
   dropdown.innerHTML = `<option value="">Assign Driver</option>`;
 
   drivers.forEach(driver => {
-    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+    dropdown.innerHTML += `<option value="${driver.id}">${driver.name}</option>`;
   });
 
-  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+  dropdown.innerHTML += `<option value="">Unassigned</option>`;
 }
 
 function renderTrucks() {
@@ -66,22 +70,27 @@ function renderTrucks() {
     return;
   }
 
-  table.innerHTML = trucks.map((truck, index) => `
-    <tr>
-      <td>${truck.unit}</td>
-      <td>${truck.year || ""} ${truck.make || ""} ${truck.model || ""}</td>
-      <td>${truck.plate || "-"} ${truck.state ? "(" + truck.state + ")" : ""}</td>
-      <td>${truck.trailer || "-"}</td>
-      <td>${truck.equipment || "-"}</td>
-      <td>${truck.driver || "Unassigned"}</td>
-      <td>${truck.status || "Available"}</td>
-      <td>
-        <button class="small-btn danger" onclick="deleteTruck(${index})">
-          Delete
-        </button>
-      </td>
-    </tr>
-  `).join("");
+  table.innerHTML = trucks.map((truck, index) => {
+    const driver = getDrivers().find(driver => driver.id === truck.driverId);
+    const driverName = driver ? driver.name : truck.driverName || "Unassigned";
+
+    return `
+      <tr>
+        <td>${truck.unit}</td>
+        <td>${truck.year || ""} ${truck.make || ""} ${truck.model || ""}</td>
+        <td>${truck.plate || "-"} ${truck.state ? "(" + truck.state + ")" : ""}</td>
+        <td>${truck.trailer || "-"}</td>
+        <td>${truck.equipment || "-"}</td>
+        <td>${driverName}</td>
+        <td>${truck.status || "Available"}</td>
+        <td>
+          <button class="small-btn danger" onclick="deleteTruck(${index})">
+            Delete
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join("");
 }
 
 function deleteTruck(index) {
