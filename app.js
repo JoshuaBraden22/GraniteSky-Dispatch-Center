@@ -15,6 +15,8 @@ const users = [
   }
 ];
 
+// LOGIN
+
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
@@ -66,7 +68,7 @@ function showUserName() {
   }
 }
 
-// LOAD STORAGE
+// STORAGE
 
 function getLoads() {
   return JSON.parse(localStorage.getItem("gsLoads")) || [];
@@ -76,11 +78,121 @@ function saveLoads(loads) {
   localStorage.setItem("gsLoads", JSON.stringify(loads));
 }
 
+function getDrivers() {
+  return JSON.parse(localStorage.getItem("gsDrivers")) || [];
+}
+
+function saveDrivers(drivers) {
+  localStorage.setItem("gsDrivers", JSON.stringify(drivers));
+}
+
+// DRIVERS
+
+const driverForm = document.getElementById("driverForm");
+
+if (driverForm) {
+  driverForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const drivers = getDrivers();
+
+    const newDriver = {
+      name: document.getElementById("driverName").value.trim(),
+      phone: document.getElementById("driverPhone").value.trim(),
+      email: document.getElementById("driverEmail").value.trim(),
+      truck: document.getElementById("driverTruck").value.trim(),
+      equipment: document.getElementById("driverEquipment").value.trim(),
+      status: document.getElementById("driverStatus").value,
+      notes: document.getElementById("driverNotes").value.trim()
+    };
+
+    drivers.unshift(newDriver);
+    saveDrivers(drivers);
+
+    driverForm.reset();
+    renderDrivers();
+  });
+}
+
+function renderDrivers() {
+  const table = document.getElementById("driversTable");
+  if (!table) return;
+
+  const drivers = getDrivers();
+
+  if (drivers.length === 0) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="7">No drivers have been added yet.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  table.innerHTML = drivers.map((driver, index) => {
+    return `
+      <tr>
+        <td>${driver.name}</td>
+        <td>${driver.phone || "-"}</td>
+        <td>${driver.email || "-"}</td>
+        <td>${driver.truck || "-"}</td>
+        <td>${driver.equipment || "-"}</td>
+        <td>${driver.status}</td>
+        <td>
+          <div class="actions">
+            <button class="small-btn danger" onclick="deleteDriver(${index})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function deleteDriver(index) {
+  if (!confirm("Delete this driver?")) return;
+
+  const drivers = getDrivers();
+  drivers.splice(index, 1);
+  saveDrivers(drivers);
+  renderDrivers();
+}
+
+function clearDrivers() {
+  if (!confirm("Clear all drivers?")) return;
+
+  localStorage.removeItem("gsDrivers");
+  renderDrivers();
+}
+
+// LOAD DRIVER DROPDOWN
+
+function populateDriverDropdown() {
+  const dropdown = document.getElementById("driver");
+  if (!dropdown) return;
+
+  const drivers = getDrivers();
+
+  dropdown.innerHTML = `<option value="">Select Driver</option>`;
+
+  if (drivers.length === 0) {
+    dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+    return;
+  }
+
+  drivers.forEach(driver => {
+    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+  });
+
+  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+}
+
 // LOAD FORM
 
 const loadForm = document.getElementById("loadForm");
 
 if (loadForm) {
+  populateDriverDropdown();
+
   loadForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -88,7 +200,7 @@ if (loadForm) {
 
     const newLoad = {
       loadNumber: document.getElementById("loadNumber").value.trim(),
-      driver: document.getElementById("driver").value.trim(),
+      driver: document.getElementById("driver").value,
       pickup: document.getElementById("pickup").value.trim(),
       delivery: document.getElementById("delivery").value.trim(),
       pickupDate: document.getElementById("pickupDate").value,
@@ -102,6 +214,7 @@ if (loadForm) {
     saveLoads(loads);
 
     loadForm.reset();
+    populateDriverDropdown();
     renderLoads();
   });
 }
@@ -109,6 +222,8 @@ if (loadForm) {
 // LOAD TABLE
 
 function renderLoads() {
+  populateDriverDropdown();
+
   const table = document.getElementById("loadsTable");
   if (!table) return;
 
@@ -133,9 +248,9 @@ function renderLoads() {
       <tr>
         <td>${load.loadNumber}</td>
         <td>${load.pickup} → ${load.delivery}</td>
-        <td>${load.driver}</td>
-        <td>${load.pickupDate}</td>
-        <td>${load.deliveryDate}</td>
+        <td>${load.driver || "Unassigned"}</td>
+        <td>${load.pickupDate || "-"}</td>
+        <td>${load.deliveryDate || "-"}</td>
         <td>$${Number(load.rate || 0).toLocaleString()}</td>
         <td><span class="badge ${badgeClass}">${load.status}</span></td>
         <td>
@@ -228,7 +343,7 @@ function renderDashboard() {
       <tr>
         <td>${load.loadNumber}</td>
         <td>${load.pickup} → ${load.delivery}</td>
-        <td>${load.driver}</td>
+        <td>${load.driver || "Unassigned"}</td>
         <td>$${Number(load.rate || 0).toLocaleString()}</td>
         <td><span class="badge ${badgeClass}">${load.status}</span></td>
       </tr>
