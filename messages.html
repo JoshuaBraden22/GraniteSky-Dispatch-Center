@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Messages | GraniteSky Dispatch Center</title>
+
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+
+<body onload="requireLogin(); renderMessages();">
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatching">
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="loads.html">Loads</a>
+    <a href="dispatch-board.html">Dispatch Board</a>
+    <a href="drivers.html">Drivers</a>
+    <a href="trucks.html">Trucks</a>
+    <a href="companies.html">Companies</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="documents.html">Documents</a>
+    <a href="calendar.html">Calendar</a>
+    <a class="active" href="messages.html">Messages</a>
+    <a href="accounting.html">Accounting</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1>Messages</h1>
+      <p>Internal dispatch notes and communication log.</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>New Message</h2>
+    </div>
+
+    <form id="messageForm" class="form-grid">
+      <input id="messageTo" placeholder="To / Driver / Carrier / Dispatcher" required>
+      <input id="messageSubject" placeholder="Subject" required>
+      <textarea id="messageBody" placeholder="Message" required></textarea>
+      <button class="btn-primary" type="submit">Save Message</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Saved Messages</h2>
+      <button class="small-btn danger" onclick="clearMessages()">Clear All</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>To</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="messagesTable">
+          <tr>
+            <td colspan="5">No messages have been added yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+</div>
+
+</body>
+</html>
