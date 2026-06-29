@@ -10,7 +10,7 @@
   <script defer src="app.js"></script>
 </head>
 
-<body onload="requireLogin(); showUserName();">
+<body onload="requireLogin(); showUserName(); renderDashboard();">
 
 <div class="app-shell">
 
@@ -47,30 +47,30 @@
 
     <section class="stat-grid">
       <div class="stat-card">
-        <span>Today’s Revenue</span>
-        <strong>$8,420</strong>
+        <span>Total Revenue</span>
+        <strong id="dashboardRevenue">$0</strong>
       </div>
 
       <div class="stat-card">
-        <span>Active Loads</span>
-        <strong>14</strong>
+        <span>Total Loads</span>
+        <strong id="dashboardLoads">0</strong>
       </div>
 
       <div class="stat-card">
-        <span>Available Drivers</span>
-        <strong>6</strong>
+        <span>In Transit</span>
+        <strong id="dashboardTransit">0</strong>
       </div>
 
       <div class="stat-card">
-        <span>Pending PODs</span>
-        <strong>3</strong>
+        <span>Delivered</span>
+        <strong id="dashboardDelivered">0</strong>
       </div>
     </section>
 
     <section class="panel">
       <div class="panel-header">
-        <h2>Active Loads</h2>
-        <a href="loads.html" class="small-btn">View All</a>
+        <h2>Recent Loads</h2>
+        <a href="loads.html" class="small-btn">Manage Loads</a>
       </div>
 
       <div class="table-wrap">
@@ -85,67 +85,9 @@
             </tr>
           </thead>
 
-          <tbody>
+          <tbody id="dashboardRecentLoads">
             <tr>
-              <td>GS-1024</td>
-              <td>Tulsa, OK → Dallas, TX</td>
-              <td>John Smith</td>
-              <td>$1,850</td>
-              <td><span class="badge transit">In Transit</span></td>
-            </tr>
-
-            <tr>
-              <td>GS-1025</td>
-              <td>Oklahoma City, OK → Denver, CO</td>
-              <td>Michael Jones</td>
-              <td>$2,400</td>
-              <td><span class="badge pickup">Pickup Today</span></td>
-            </tr>
-
-            <tr>
-              <td>GS-1026</td>
-              <td>Kansas City, MO → Atlanta, GA</td>
-              <td>Sarah Davis</td>
-              <td>$2,950</td>
-              <td><span class="badge delivered">Delivered</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Today’s Dispatch Notes</h2>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Task</th>
-              <th>Assigned To</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td>9:00 AM</td>
-              <td>Pickup check call for GS-1025</td>
-              <td>Dispatch</td>
-            </tr>
-
-            <tr>
-              <td>11:30 AM</td>
-              <td>Confirm delivery appointment for GS-1024</td>
-              <td>Dispatch</td>
-            </tr>
-
-            <tr>
-              <td>3:00 PM</td>
-              <td>Collect POD for GS-1026</td>
-              <td>Documents</td>
+              <td colspan="5">No loads have been added yet.</td>
             </tr>
           </tbody>
         </table>
