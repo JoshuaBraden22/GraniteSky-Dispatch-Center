@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Dashboard Module with Linked Load Data
+// GraniteSky Dispatch Center - Dashboard Module with View Load Links
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("dashboardRevenue")) return;
@@ -13,10 +13,7 @@ function renderDashboard() {
   const drivers = getDrivers();
   const trucks = getTrucks();
 
-  const totalRevenue = loads.reduce((sum, load) => {
-    return sum + Number(load.rate || 0);
-  }, 0);
-
+  const totalRevenue = loads.reduce((sum, load) => sum + Number(load.rate || 0), 0);
   const delivered = loads.filter(load => load.status === "Delivered").length;
 
   setText("dashboardRevenue", formatMoney(totalRevenue));
@@ -47,7 +44,7 @@ function renderRecentLoads(loads) {
 
     return `
       <tr>
-        <td>${load.loadNumber}</td>
+        <td><a class="small-btn" href="load-details.html?id=${load.id}">${load.loadNumber}</a></td>
         <td>${broker ? broker.name : load.brokerName || "Unassigned"}</td>
         <td>${carrier ? carrier.name : load.carrierName || "Unassigned"}</td>
         <td>${driver ? driver.name : load.driverName || "Unassigned"} / Unit ${truck ? truck.unit : load.truckUnit || "Unassigned"}</td>
