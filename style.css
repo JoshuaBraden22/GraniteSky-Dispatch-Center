@@ -59,17 +59,16 @@ textarea {
   box-shadow: var(--shadow);
 }
 
-.brand-mark {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  color: white;
-  font-weight: 900;
-  font-size: 1.4rem;
-  background: linear-gradient(135deg, var(--blue), var(--light-blue));
-  margin-bottom: 22px;
+.main-logo {
+  width: 240px;
+  max-width: 90%;
+  height: auto;
+  display: block;
+  margin: 0 auto 26px;
+}
+
+.center-card {
+  text-align: center;
 }
 
 .login-card h1 {
@@ -93,6 +92,7 @@ label {
   font-weight: 800;
   color: var(--navy);
   font-size: .92rem;
+  text-align: left;
 }
 
 input,
@@ -122,6 +122,18 @@ textarea:focus {
   border-radius: 999px;
   font-weight: 900;
   margin-top: 8px;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-dark {
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+}
+
+.portal-buttons {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
 }
 
 .demo-logins {
@@ -152,23 +164,17 @@ textarea:focus {
   height: 100vh;
 }
 
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 34px;
+.sidebar-logo {
+  background: white;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 30px;
 }
 
-.sidebar-brand .brand-mark {
-  width: 46px;
-  height: 46px;
-  margin: 0;
-  border-radius: 14px;
-}
-
-.sidebar-brand h2 {
-  font-size: 1.1rem;
-  line-height: 1.1;
+.sidebar-logo img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .sidebar-nav {
@@ -388,5 +394,9 @@ td {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .main-logo {
+    width: 200px;
   }
 }
