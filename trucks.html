@@ -1,116 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+// GraniteSky Dispatch Center - Trucks Module
 
-<title>Trucks | GraniteSky Dispatch Center</title>
+document.addEventListener("DOMContentLoaded", () => {
+  if (!document.getElementById("truckForm")) return;
 
-<link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
-</head>
+  requireLogin();
+  populateTruckDriverDropdown();
+  renderTrucks();
 
-<body onload="requireLogin(); showUserName(); populateTruckDriverDropdown(); renderTrucks();">
+  const truckForm = document.getElementById("truckForm");
 
-<div class="app-shell">
+  truckForm.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <img src="logo.png" alt="GraniteSky Dispatching">
-  </div>
+    const trucks = getTrucks();
 
-  <nav class="sidebar-nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="loads.html">Loads</a>
-    <a href="drivers.html">Drivers</a>
-    <a class="active" href="trucks.html">Trucks</a>
-    <a href="carriers.html">Carriers</a>
-    <a href="documents.html">Documents</a>
-    <a href="invoices.html">Invoices</a>
-    <a href="settings.html">Settings</a>
-    <button onclick="logout()">Logout</button>
-  </nav>
-</aside>
+    const truck = {
+      unit: document.getElementById("truckUnit").value.trim(),
+      vin: document.getElementById("truckVin").value.trim(),
+      year: document.getElementById("truckYear").value.trim(),
+      make: document.getElementById("truckMake").value.trim(),
+      model: document.getElementById("truckModel").value.trim(),
+      plate: document.getElementById("truckPlate").value.trim(),
+      state: document.getElementById("truckState").value.trim(),
+      trailer: document.getElementById("trailerNumber").value.trim(),
+      equipment: document.getElementById("truckEquipment").value.trim(),
+      driver: document.getElementById("truckDriver").value,
+      status: document.getElementById("truckStatus").value,
+      notes: document.getElementById("truckNotes").value.trim()
+    };
 
-<main class="main-content">
+    trucks.unshift(truck);
+    saveTrucks(trucks);
 
-  <div class="topbar">
-    <div>
-      <h1>Truck Management</h1>
-      <p>Add trucks and assign them to saved drivers.</p>
-    </div>
-  </div>
+    truckForm.reset();
+    populateTruckDriverDropdown();
+    renderTrucks();
 
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Add New Truck</h2>
-    </div>
+    showNotification("Truck saved successfully.");
+  });
+});
 
-    <form id="truckForm" class="form-grid">
-      <input id="truckUnit" placeholder="Unit Number" required>
-      <input id="truckVin" placeholder="VIN">
+function populateTruckDriverDropdown() {
+  const dropdown = document.getElementById("truckDriver");
+  if (!dropdown) return;
 
-      <input id="truckYear" placeholder="Year">
-      <input id="truckMake" placeholder="Make">
+  const drivers = getDrivers();
 
-      <input id="truckModel" placeholder="Model">
-      <input id="truckPlate" placeholder="License Plate">
+  dropdown.innerHTML = `<option value="">Assign Driver</option>`;
 
-      <input id="truckState" placeholder="Plate State">
-      <input id="trailerNumber" placeholder="Trailer Number">
+  drivers.forEach(driver => {
+    dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
+  });
 
-      <input id="truckEquipment" placeholder="Equipment Type">
+  dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
+}
 
-      <select id="truckDriver">
-        <option value="">Assign Driver</option>
-      </select>
+function renderTrucks() {
+  const table = document.getElementById("trucksTable");
+  if (!table) return;
 
-      <select id="truckStatus">
-        <option>Available</option>
-        <option>Assigned</option>
-        <option>Maintenance</option>
-        <option>Out of Service</option>
-      </select>
+  const trucks = getTrucks();
 
-      <textarea id="truckNotes" placeholder="Truck notes, maintenance notes, insurance reminders, etc."></textarea>
+  if (trucks.length === 0) {
+    table.innerHTML = `<tr><td colspan="8">No trucks added yet.</td></tr>`;
+    return;
+  }
 
-      <button class="btn-primary" type="submit">Save Truck</button>
-    </form>
-  </section>
+  table.innerHTML = trucks.map((truck, index) => `
+    <tr>
+      <td>${truck.unit}</td>
+      <td>${truck.year || ""} ${truck.make || ""} ${truck.model || ""}</td>
+      <td>${truck.plate || "-"} ${truck.state ? "(" + truck.state + ")" : ""}</td>
+      <td>${truck.trailer || "-"}</td>
+      <td>${truck.equipment || "-"}</td>
+      <td>${truck.driver || "Unassigned"}</td>
+      <td>${truck.status || "Available"}</td>
+      <td>
+        <button class="small-btn danger" onclick="deleteTruck(${index})">
+          Delete
+        </button>
+      </td>
+    </tr>
+  `).join("");
+}
 
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Current Trucks</h2>
-      <button class="small-btn danger" onclick="clearTrucks()">Clear All</button>
-    </div>
+function deleteTruck(index) {
+  if (!confirmDelete("truck")) return;
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Unit</th>
-            <th>Truck</th>
-            <th>Plate</th>
-            <th>Trailer</th>
-            <th>Equipment</th>
-            <th>Driver</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+  const trucks = getTrucks();
+  trucks.splice(index, 1);
 
-        <tbody id="trucksTable">
-          <tr>
-            <td colspan="8">No trucks have been added yet.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+  saveTrucks(trucks);
+  renderTrucks();
 
-</main>
+  showNotification("Truck deleted.", "#dc2626");
+}
 
-</div>
+function clearTrucks() {
+  if (!confirm("Clear all trucks?")) return;
 
-</body>
-</html>
+  localStorage.removeItem("gsTrucks");
+  renderTrucks();
+
+  showNotification("All trucks cleared.", "#dc2626");
+}
