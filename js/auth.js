@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Authentication Module
+// GraniteSky Dispatch Center - Improved Authentication Module
 
 const defaultUsers = [
   {
@@ -9,17 +9,8 @@ const defaultUsers = [
     role: "Admin",
     carrierId: "",
     carrierName: "",
-    status: "Active"
-  },
-  {
-    id: "default_carrier",
-    name: "Carrier User",
-    email: "carrier@granitesky.com",
-    password: "carrier123",
-    role: "Carrier",
-    carrierId: "",
-    carrierName: "",
-    status: "Active"
+    status: "Active",
+    forcePasswordChange: false
   }
 ];
 
@@ -32,7 +23,13 @@ function requireLogin() {
   const user = JSON.parse(localStorage.getItem("gsUser"));
 
   if (!user) {
-    window.location.href = "login.html?v=4000";
+    window.location.href = "login.html?v=5000";
+    return null;
+  }
+
+  if (user.status === "Inactive") {
+    alert("This account is inactive.");
+    logout();
     return null;
   }
 
@@ -41,7 +38,7 @@ function requireLogin() {
 
 function logout() {
   localStorage.removeItem("gsUser");
-  window.location.href = "login.html?v=4000";
+  window.location.href = "login.html?v=5000";
 }
 
 function getCurrentUser() {
@@ -60,11 +57,26 @@ function showUserName() {
 function routeUser(user) {
   const role = String(user.role || "").toLowerCase();
 
-  if (role === "carrier" || role === "owner operator") {
-    window.location.href = "carrier-dashboard.html?v=4000";
-  } else {
-    window.location.href = "dashboard.html?v=999";
+  if (user.forcePasswordChange) {
+    alert("Password change will be required in the production version.");
   }
+
+  if (role === "admin" || role === "dispatcher") {
+    window.location.href = "dashboard.html?v=999";
+    return;
+  }
+
+  if (role === "carrier") {
+    window.location.href = "carrier-dashboard.html?v=5000";
+    return;
+  }
+
+  if (role === "owner operator") {
+    window.location.href = "carrier-dashboard.html?v=5000";
+    return;
+  }
+
+  window.location.href = "dashboard.html?v=999";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
