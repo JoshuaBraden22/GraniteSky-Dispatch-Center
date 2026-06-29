@@ -1,18 +1,8 @@
 // GraniteSky Dispatch Center v1.0
 
 const users = [
-  {
-    email: "admin@granitesky.com",
-    password: "admin123",
-    role: "admin",
-    name: "Joshua Braden"
-  },
-  {
-    email: "carrier@granitesky.com",
-    password: "carrier123",
-    role: "carrier",
-    name: "Carrier User"
-  }
+  { email: "admin@granitesky.com", password: "admin123", role: "admin", name: "Joshua Braden" },
+  { email: "carrier@granitesky.com", password: "carrier123", role: "carrier", name: "Carrier User" }
 ];
 
 const loginForm = document.getElementById("loginForm");
@@ -23,7 +13,6 @@ if (loginForm) {
 
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
-
     const user = users.find(u => u.email === email && u.password === password);
 
     if (!user) {
@@ -32,23 +21,16 @@ if (loginForm) {
     }
 
     localStorage.setItem("gsUser", JSON.stringify(user));
-
-    if (user.role === "admin") {
-      window.location.href = "dashboard.html";
-    } else {
-      window.location.href = "carrier-dashboard.html";
-    }
+    window.location.href = user.role === "admin" ? "dashboard.html" : "carrier-dashboard.html";
   });
 }
 
 function requireLogin() {
   const user = JSON.parse(localStorage.getItem("gsUser"));
-
   if (!user) {
     window.location.href = "login.html";
     return null;
   }
-
   return user;
 }
 
@@ -60,10 +42,7 @@ function logout() {
 function showUserName() {
   const user = JSON.parse(localStorage.getItem("gsUser"));
   const target = document.getElementById("loggedUser");
-
-  if (target && user) {
-    target.textContent = user.name;
-  }
+  if (target && user) target.textContent = user.name;
 }
 
 function getData(key) {
@@ -74,39 +53,25 @@ function saveData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-function getLoads() {
-  return getData("gsLoads");
-}
+function getLoads() { return getData("gsLoads"); }
+function saveLoads(data) { saveData("gsLoads", data); }
 
-function saveLoads(loads) {
-  saveData("gsLoads", loads);
-}
+function getDrivers() { return getData("gsDrivers"); }
+function saveDrivers(data) { saveData("gsDrivers", data); }
 
-function getDrivers() {
-  return getData("gsDrivers");
-}
+function getTrucks() { return getData("gsTrucks"); }
+function saveTrucks(data) { saveData("gsTrucks", data); }
 
-function saveDrivers(drivers) {
-  saveData("gsDrivers", drivers);
-}
+function getCompanies() { return getData("gsCompanies"); }
+function saveCompanies(data) { saveData("gsCompanies", data); }
 
-function getTrucks() {
-  return getData("gsTrucks");
-}
+function getCarriers() { return getData("gsCarriers"); }
+function saveCarriers(data) { saveData("gsCarriers", data); }
 
-function saveTrucks(trucks) {
-  saveData("gsTrucks", trucks);
-}
+function getDocuments() { return getData("gsDocuments"); }
+function saveDocuments(data) { saveData("gsDocuments", data); }
 
-function getDocuments() {
-  return getData("gsDocuments");
-}
-
-function saveDocuments(documents) {
-  saveData("gsDocuments", documents);
-}
-
-/* DRIVERS */
+// DRIVERS
 
 const driverForm = document.getElementById("driverForm");
 
@@ -116,7 +81,7 @@ if (driverForm) {
 
     const drivers = getDrivers();
 
-    const driver = {
+    drivers.unshift({
       name: document.getElementById("driverName").value.trim(),
       phone: document.getElementById("driverPhone").value.trim(),
       email: document.getElementById("driverEmail").value.trim(),
@@ -124,11 +89,9 @@ if (driverForm) {
       equipment: document.getElementById("driverEquipment").value.trim(),
       status: document.getElementById("driverStatus").value,
       notes: document.getElementById("driverNotes").value.trim()
-    };
+    });
 
-    drivers.unshift(driver);
     saveDrivers(drivers);
-
     driverForm.reset();
     renderDrivers();
   });
@@ -160,7 +123,6 @@ function renderDrivers() {
 
 function deleteDriver(index) {
   if (!confirm("Delete this driver?")) return;
-
   const drivers = getDrivers();
   drivers.splice(index, 1);
   saveDrivers(drivers);
@@ -170,26 +132,21 @@ function deleteDriver(index) {
 
 function clearDrivers() {
   if (!confirm("Clear all drivers?")) return;
-
   localStorage.removeItem("gsDrivers");
   renderDrivers();
   renderDashboard();
 }
 
-/* TRUCKS */
+// TRUCKS
 
 function populateTruckDriverDropdown() {
   const dropdown = document.getElementById("truckDriver");
   if (!dropdown) return;
 
-  const drivers = getDrivers();
-
   dropdown.innerHTML = `<option value="">Assign Driver</option>`;
-
-  drivers.forEach(driver => {
+  getDrivers().forEach(driver => {
     dropdown.innerHTML += `<option value="${driver.name}">${driver.name}</option>`;
   });
-
   dropdown.innerHTML += `<option value="Unassigned">Unassigned</option>`;
 }
 
@@ -203,7 +160,7 @@ if (truckForm) {
 
     const trucks = getTrucks();
 
-    const truck = {
+    trucks.unshift({
       unit: document.getElementById("truckUnit").value.trim(),
       vin: document.getElementById("truckVin").value.trim(),
       year: document.getElementById("truckYear").value.trim(),
@@ -216,11 +173,9 @@ if (truckForm) {
       driver: document.getElementById("truckDriver").value,
       status: document.getElementById("truckStatus").value,
       notes: document.getElementById("truckNotes").value.trim()
-    };
+    });
 
-    trucks.unshift(truck);
     saveTrucks(trucks);
-
     truckForm.reset();
     populateTruckDriverDropdown();
     renderTrucks();
@@ -257,7 +212,6 @@ function renderTrucks() {
 
 function deleteTruck(index) {
   if (!confirm("Delete this truck?")) return;
-
   const trucks = getTrucks();
   trucks.splice(index, 1);
   saveTrucks(trucks);
@@ -267,23 +221,156 @@ function deleteTruck(index) {
 
 function clearTrucks() {
   if (!confirm("Clear all trucks?")) return;
-
   localStorage.removeItem("gsTrucks");
   renderTrucks();
   renderDashboard();
 }
 
-/* LOADS */
+// COMPANIES
+
+const companyForm = document.getElementById("companyForm");
+
+if (companyForm) {
+  companyForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const companies = getCompanies();
+
+    companies.unshift({
+      name: document.getElementById("companyName").value.trim(),
+      type: document.getElementById("companyType").value,
+      mc: document.getElementById("companyMC").value.trim(),
+      dot: document.getElementById("companyDOT").value.trim(),
+      contact: document.getElementById("companyContact").value.trim(),
+      phone: document.getElementById("companyPhone").value.trim(),
+      email: document.getElementById("companyEmail").value.trim(),
+      terms: document.getElementById("companyTerms").value.trim(),
+      notes: document.getElementById("companyNotes").value.trim()
+    });
+
+    saveCompanies(companies);
+    companyForm.reset();
+    renderCompanies();
+  });
+}
+
+function renderCompanies() {
+  const table = document.getElementById("companiesTable");
+  if (!table) return;
+
+  const companies = getCompanies();
+
+  if (companies.length === 0) {
+    table.innerHTML = `<tr><td colspan="9">No companies have been added yet.</td></tr>`;
+    return;
+  }
+
+  table.innerHTML = companies.map((company, index) => `
+    <tr>
+      <td>${company.name}</td>
+      <td>${company.type}</td>
+      <td>${company.mc || "-"}</td>
+      <td>${company.dot || "-"}</td>
+      <td>${company.contact || "-"}</td>
+      <td>${company.phone || "-"}</td>
+      <td>${company.email || "-"}</td>
+      <td>${company.terms || "-"}</td>
+      <td><button class="small-btn danger" onclick="deleteCompany(${index})">Delete</button></td>
+    </tr>
+  `).join("");
+}
+
+function deleteCompany(index) {
+  if (!confirm("Delete this company?")) return;
+  const companies = getCompanies();
+  companies.splice(index, 1);
+  saveCompanies(companies);
+  renderCompanies();
+}
+
+function clearCompanies() {
+  if (!confirm("Clear all companies?")) return;
+  localStorage.removeItem("gsCompanies");
+  renderCompanies();
+}
+
+// CARRIERS
+
+const carrierForm = document.getElementById("carrierForm");
+
+if (carrierForm) {
+  carrierForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const carriers = getCarriers();
+
+    carriers.unshift({
+      name: document.getElementById("carrierName").value.trim(),
+      mc: document.getElementById("carrierMC").value.trim(),
+      dot: document.getElementById("carrierDOT").value.trim(),
+      contact: document.getElementById("carrierContact").value.trim(),
+      phone: document.getElementById("carrierPhone").value.trim(),
+      email: document.getElementById("carrierEmail").value.trim(),
+      insurance: document.getElementById("carrierInsurance").value,
+      status: document.getElementById("carrierStatus").value,
+      notes: document.getElementById("carrierNotes").value.trim()
+    });
+
+    saveCarriers(carriers);
+    carrierForm.reset();
+    renderCarriers();
+  });
+}
+
+function renderCarriers() {
+  const table = document.getElementById("carriersTable");
+  if (!table) return;
+
+  const carriers = getCarriers();
+
+  if (carriers.length === 0) {
+    table.innerHTML = `<tr><td colspan="9">No carriers have been added yet.</td></tr>`;
+    return;
+  }
+
+  table.innerHTML = carriers.map((carrier, index) => `
+    <tr>
+      <td>${carrier.name}</td>
+      <td>${carrier.mc || "-"}</td>
+      <td>${carrier.dot || "-"}</td>
+      <td>${carrier.contact || "-"}</td>
+      <td>${carrier.phone || "-"}</td>
+      <td>${carrier.email || "-"}</td>
+      <td>${carrier.insurance || "-"}</td>
+      <td>${carrier.status}</td>
+      <td><button class="small-btn danger" onclick="deleteCarrier(${index})">Delete</button></td>
+    </tr>
+  `).join("");
+}
+
+function deleteCarrier(index) {
+  if (!confirm("Delete this carrier?")) return;
+  const carriers = getCarriers();
+  carriers.splice(index, 1);
+  saveCarriers(carriers);
+  renderCarriers();
+}
+
+function clearCarriers() {
+  if (!confirm("Clear all carriers?")) return;
+  localStorage.removeItem("gsCarriers");
+  renderCarriers();
+}
+
+// LOADS
 
 function populateDriverDropdown() {
   const dropdown = document.getElementById("driver");
   if (!dropdown) return;
 
-  const drivers = getDrivers();
-
   dropdown.innerHTML = `<option value="">Select Driver</option>`;
 
-  drivers.forEach(driver => {
+  getDrivers().forEach(driver => {
     const truck = getTrucks().find(t => t.driver === driver.name);
     const truckInfo = truck ? ` — Unit ${truck.unit}` : "";
     dropdown.innerHTML += `<option value="${driver.name}">${driver.name}${truckInfo}</option>`;
@@ -302,10 +389,9 @@ if (loadForm) {
 
     const selectedDriver = document.getElementById("driver").value;
     const assignedTruck = getTrucks().find(t => t.driver === selectedDriver);
-
     const loads = getLoads();
 
-    const load = {
+    loads.unshift({
       loadNumber: document.getElementById("loadNumber").value.trim(),
       driver: selectedDriver,
       truck: assignedTruck ? assignedTruck.unit : "Unassigned",
@@ -316,11 +402,9 @@ if (loadForm) {
       rate: document.getElementById("rate").value,
       status: document.getElementById("status").value,
       notes: document.getElementById("notes").value.trim()
-    };
+    });
 
-    loads.unshift(load);
     saveLoads(loads);
-
     loadForm.reset();
     populateDriverDropdown();
     renderLoads();
@@ -382,38 +466,36 @@ function updateLoadStatus(index) {
   saveLoads(loads);
   renderLoads();
   renderDashboard();
+  renderDispatchBoard();
 }
 
 function deleteLoad(index) {
   if (!confirm("Delete this load?")) return;
-
   const loads = getLoads();
   loads.splice(index, 1);
   saveLoads(loads);
-
   renderLoads();
   renderDashboard();
+  renderDispatchBoard();
 }
 
 function clearLoads() {
   if (!confirm("Clear all loads?")) return;
-
   localStorage.removeItem("gsLoads");
   renderLoads();
   renderDashboard();
+  renderDispatchBoard();
 }
 
-/* DOCUMENTS */
+// DOCUMENTS
 
 function populateDocumentLoadDropdown() {
   const dropdown = document.getElementById("documentLoad");
   if (!dropdown) return;
 
-  const loads = getLoads();
-
   dropdown.innerHTML = `<option value="">Attach to Load</option>`;
 
-  loads.forEach(load => {
+  getLoads().forEach(load => {
     dropdown.innerHTML += `<option value="${load.loadNumber}">${load.loadNumber} — ${load.pickup} → ${load.delivery}</option>`;
   });
 }
@@ -430,17 +512,15 @@ if (documentForm) {
     const fileInput = document.getElementById("documentFile");
     const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "No file selected";
 
-    const documentRecord = {
+    documents.unshift({
       load: document.getElementById("documentLoad").value || "Unassigned",
       type: document.getElementById("documentType").value,
       name: document.getElementById("documentName").value.trim(),
       file: fileName,
       notes: document.getElementById("documentNotes").value.trim()
-    };
+    });
 
-    documents.unshift(documentRecord);
     saveDocuments(documents);
-
     documentForm.reset();
     populateDocumentLoadDropdown();
     renderDocuments();
@@ -474,7 +554,6 @@ function renderDocuments() {
 
 function deleteDocument(index) {
   if (!confirm("Delete this document record?")) return;
-
   const documents = getDocuments();
   documents.splice(index, 1);
   saveDocuments(documents);
@@ -483,12 +562,43 @@ function deleteDocument(index) {
 
 function clearDocuments() {
   if (!confirm("Clear all document records?")) return;
-
   localStorage.removeItem("gsDocuments");
   renderDocuments();
 }
 
-/* DASHBOARD */
+// DISPATCH BOARD
+
+function renderDispatchBoard() {
+  const loads = getLoads();
+
+  const pickupBoard = document.getElementById("pickupBoard");
+  const transitBoard = document.getElementById("transitBoard");
+  const deliveredBoard = document.getElementById("deliveredBoard");
+
+  if (!pickupBoard || !transitBoard || !deliveredBoard) return;
+
+  pickupBoard.innerHTML = renderBoardCards(loads.filter(load => load.status === "Pickup Today"), "No pickup loads.");
+  transitBoard.innerHTML = renderBoardCards(loads.filter(load => load.status === "In Transit"), "No loads in transit.");
+  deliveredBoard.innerHTML = renderBoardCards(loads.filter(load => load.status === "Delivered"), "No delivered loads.");
+}
+
+function renderBoardCards(loads, emptyMessage) {
+  if (loads.length === 0) {
+    return `<p class="empty-board">${emptyMessage}</p>`;
+  }
+
+  return loads.map(load => `
+    <div class="dispatch-card">
+      <strong>${load.loadNumber}</strong>
+      <p>${load.pickup} → ${load.delivery}</p>
+      <small>Driver: ${load.driver || "Unassigned"}</small><br>
+      <small>Truck: Unit ${load.truck || "Unassigned"}</small><br>
+      <small>Rate: $${Number(load.rate || 0).toLocaleString()}</small>
+    </div>
+  `).join("");
+}
+
+// DASHBOARD
 
 function renderDashboard() {
   const loads = getLoads();
