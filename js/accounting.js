@@ -1,146 +1,74 @@
-// ==========================================
-// GraniteSky Dispatch Center
-// Accounting Module
-// ==========================================
+// GraniteSky Dispatch Center - Accounting Module
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (!document.getElementById("accountingRevenue")) return;
 
-    if (!document.getElementById("accountingRevenue")) return;
-
-    requireLogin();
-    renderAccounting();
-
+  requireLogin();
+  renderAccounting();
 });
 
-// ==========================================
-
 function renderAccounting() {
+  const loads = getLoads();
 
-    const loads = getLoads();
+  const totalRevenue = loads.reduce((sum, load) => sum + Number(load.rate || 0), 0);
+  const totalCarrierPay = loads.reduce((sum, load) => sum + Number(load.carrierPay || 0), 0);
+  const totalDriverPay = loads.reduce((sum, load) => sum + Number(load.driverPay || 0), 0);
+  const totalDispatchFee = loads.reduce((sum, load) => sum + Number(load.dispatchFee || 0), 0);
+  const totalProfit = totalRevenue - totalCarrierPay - totalDriverPay;
 
-    const deliveredLoads = loads.filter(load => load.status === "Delivered");
+  setAccountingText("accountingRevenue", formatMoney(totalRevenue));
+  setAccountingText("accountingDelivered", loads.filter(load => load.status === "Delivered").length);
+  setAccountingText("accountingOpen", loads.filter(load => load.status !== "Delivered").length);
+  setAccountingText("accountingAverage", formatMoney(loads.length ? totalRevenue / loads.length : 0));
 
-    const openLoads = loads.filter(load => load.status !== "Delivered");
+  setAccountingText("accountingCarrierPay", formatMoney(totalCarrierPay));
+  setAccountingText("accountingDriverPay", formatMoney(totalDriverPay));
+  setAccountingText("accountingDispatchFee", formatMoney(totalDispatchFee));
+  setAccountingText("accountingProfit", formatMoney(totalProfit));
 
-    const totalRevenue = loads.reduce((sum, load) => {
-
-        return sum + Number(load.rate || 0);
-
-    }, 0);
-
-    const averageRevenue = loads.length
-        ? totalRevenue / loads.length
-        : 0;
-
-    setAccountingText(
-        "accountingRevenue",
-        formatMoney(totalRevenue)
-    );
-
-    setAccountingText(
-        "accountingDelivered",
-        deliveredLoads.length
-    );
-
-    setAccountingText(
-        "accountingOpen",
-        openLoads.length
-    );
-
-    setAccountingText(
-        "accountingAverage",
-        formatMoney(averageRevenue)
-    );
-
-    renderAccountingTable(loads);
-
+  renderAccountingTable(loads);
 }
-
-// ==========================================
 
 function renderAccountingTable(loads) {
+  const table = document.getElementById("accountingTable");
+  if (!table) return;
 
-    const table = document.getElementById("accountingTable");
+  if (loads.length === 0) {
+    table.innerHTML = `<tr><td colspan="10">No accounting records available.</td></tr>`;
+    return;
+  }
 
-    if (!table) return;
-
-    if (loads.length === 0) {
-
-        table.innerHTML = `
-        <tr>
-            <td colspan="9">
-                No accounting records available.
-            </td>
-        </tr>
-        `;
-
-        return;
-
-    }
-
-    table.innerHTML = loads.map(load => {
-
-        const broker =
-            getCompanies().find(c => c.id === load.brokerId);
-
-        const carrier =
-            getCarriers().find(c => c.id === load.carrierId);
-
-        const driver =
-            getDrivers().find(d => d.id === load.driverId);
-
-        return `
-
-        <tr>
-
-            <td>${load.loadNumber}</td>
-
-            <td>${broker ? broker.name : load.brokerName || "-"}</td>
-
-            <td>${carrier ? carrier.name : load.carrierName || "-"}</td>
-
-            <td>${driver ? driver.name : load.driverName || "-"}</td>
-
-            <td>${load.pickup} → ${load.delivery}</td>
-
-            <td>${formatMoney(load.rate)}</td>
-
-            <td>${load.status}</td>
-
-            <td>
-
-                ${load.status === "Delivered"
-                    ? "Ready to Invoice"
-                    : "Open"}
-
-            </td>
-
-            <td>
-
-                ${load.status === "Delivered"
-                    ? "✔"
-                    : "—"}
-
-            </td>
-
-        </tr>
-
-        `;
-
-    }).join("");
-
+  table.innerHTML = loads.map((load, index) => `
+    <tr>
+      <td>${load.loadNumber}</td>
+      <td>${load.brokerName || "-"}</td>
+      <td>${load.carrierName || "-"}</td>
+      <td>${load.driverName || "-"}</td>
+      <td>${formatMoney(load.rate)}</td>
+      <td><input type="number" value="${load.carrierPay || ""}" onchange="updateAccountingField(${index}, 'carrierPay', this.value)"></td>
+      <td><input type="number" value="${load.driverPay || ""}" onchange="updateAccountingField(${index}, 'driverPay', this.value)"></td>
+      <td><input type="number" value="${load.dispatchFee || ""}" onchange="updateAccountingField(${index}, 'dispatchFee', this.value)"></td>
+      <td>${formatMoney(Number(load.rate || 0) - Number(load.carrierPay || 0) - Number(load.driverPay || 0))}</td>
+      <td>
+        <select onchange="updateAccountingField(${index}, 'invoiceStatus', this.value)">
+          <option ${load.invoiceStatus === "Open" ? "selected" : ""}>Open</option>
+          <option ${load.invoiceStatus === "Ready to Invoice" ? "selected" : ""}>Ready to Invoice</option>
+          <option ${load.invoiceStatus === "Invoiced" ? "selected" : ""}>Invoiced</option>
+          <option ${load.invoiceStatus === "Paid" ? "selected" : ""}>Paid</option>
+        </select>
+      </td>
+    </tr>
+  `).join("");
 }
 
-// ==========================================
+function updateAccountingField(index, field, value) {
+  const loads = getLoads();
+  loads[index][field] = value;
+  saveLoads(loads);
+  renderAccounting();
+}
 
 function setAccountingText(id, value) {
-
-    const element = document.getElementById(id);
-
-    if (element) {
-
-        element.textContent = value;
-
-    }
-
+  const element = document.getElementById(id);
+  if (element) element.textContent = value;
 }
