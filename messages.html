@@ -7,10 +7,14 @@
 <title>Messages | GraniteSky Dispatch Center</title>
 
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/messages.js"></script>
 </head>
 
-<body onload="requireLogin(); renderMessages();">
+<body>
 
 <div class="app-shell">
 
@@ -29,7 +33,7 @@
     <a href="carriers.html">Carriers</a>
     <a href="documents.html">Documents</a>
     <a href="calendar.html">Calendar</a>
-    <a class="active" href="messages.html">Messages</a>
+    <a href="messages.html" class="active">Messages</a>
     <a href="accounting.html">Accounting</a>
     <button onclick="logout()">Logout</button>
   </nav>
@@ -40,7 +44,7 @@
   <div class="topbar">
     <div>
       <h1>Messages</h1>
-      <p>Internal dispatch notes and communication log.</p>
+      <p>Internal dispatch notes and communication records.</p>
     </div>
   </div>
 
@@ -77,7 +81,7 @@
 
         <tbody id="messagesTable">
           <tr>
-            <td colspan="5">No messages have been added yet.</td>
+            <td colspan="5">No messages added yet.</td>
           </tr>
         </tbody>
       </table>
