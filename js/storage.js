@@ -1,4 +1,8 @@
-// GraniteSky Dispatch Center - Storage Module
+// GraniteSky Dispatch Center - Storage Module with IDs
+
+function generateId(prefix = "gs") {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
 
 function getData(key) {
   return JSON.parse(localStorage.getItem(key)) || [];
@@ -8,56 +12,79 @@ function saveData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
+function ensureIds(key, prefix) {
+  const records = getData(key);
+  let changed = false;
+
+  const updated = records.map(record => {
+    if (!record.id) {
+      record.id = generateId(prefix);
+      changed = true;
+    }
+    return record;
+  });
+
+  if (changed) saveData(key, updated);
+  return updated;
+}
+
+// Loads
 function getLoads() {
-  return getData("gsLoads");
+  return ensureIds("gsLoads", "load");
 }
 
 function saveLoads(data) {
   saveData("gsLoads", data);
 }
 
+// Drivers
 function getDrivers() {
-  return getData("gsDrivers");
+  return ensureIds("gsDrivers", "driver");
 }
 
 function saveDrivers(data) {
   saveData("gsDrivers", data);
 }
 
+// Trucks
 function getTrucks() {
-  return getData("gsTrucks");
+  return ensureIds("gsTrucks", "truck");
 }
 
 function saveTrucks(data) {
   saveData("gsTrucks", data);
 }
 
+// Companies / Brokers / Customers
 function getCompanies() {
-  return getData("gsCompanies");
+  return ensureIds("gsCompanies", "company");
 }
 
 function saveCompanies(data) {
   saveData("gsCompanies", data);
 }
 
+// Carriers
 function getCarriers() {
-  return getData("gsCarriers");
+  return ensureIds("gsCarriers", "carrier");
 }
 
 function saveCarriers(data) {
   saveData("gsCarriers", data);
 }
 
+// Documents
 function getDocuments() {
-  return getData("gsDocuments");
+  return ensureIds("gsDocuments", "document");
 }
 
 function saveDocuments(data) {
   saveData("gsDocuments", data);
 }
 
+// Messages
 function getMessages() {
-  return getData("gsMessages");
+  return ensureIds("gsMessages", "message");
 }
 
 function saveMessages(data) {
