@@ -7,10 +7,14 @@
 <title>Calendar | GraniteSky Dispatch Center</title>
 
 <link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+
+<script defer src="js/storage.js"></script>
+<script defer src="js/auth.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/calendar.js"></script>
 </head>
 
-<body onload="requireLogin(); renderCalendar();">
+<body>
 
 <div class="app-shell">
 
@@ -28,7 +32,7 @@
     <a href="companies.html">Companies</a>
     <a href="carriers.html">Carriers</a>
     <a href="documents.html">Documents</a>
-    <a class="active" href="calendar.html">Calendar</a>
+    <a href="calendar.html" class="active">Calendar</a>
     <a href="messages.html">Messages</a>
     <a href="accounting.html">Accounting</a>
     <button onclick="logout()">Logout</button>
@@ -40,7 +44,7 @@
   <div class="topbar">
     <div>
       <h1>Dispatch Calendar</h1>
-      <p>Pickup and delivery schedule from saved loads.</p>
+      <p>View pickup and delivery dates from saved loads.</p>
     </div>
 
     <a href="loads.html" class="btn-primary">+ New Load</a>
@@ -48,7 +52,7 @@
 
   <section class="panel">
     <div class="panel-header">
-      <h2>Upcoming Schedule</h2>
+      <h2>Scheduled Load Events</h2>
     </div>
 
     <div class="table-wrap">
