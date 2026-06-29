@@ -14,18 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const users = getUsers();
 
-    const carrierId = document.getElementById("userCarrier").value;
+    const carrierId = getValue("userCarrier");
     const carrier = getCarriers().find(c => c.id === carrierId);
 
     const user = {
       id: generateId("user"),
-      name: document.getElementById("userName").value.trim(),
-      email: document.getElementById("userEmail").value.trim().toLowerCase(),
-      password: document.getElementById("userPassword").value,
-      role: document.getElementById("userRole").value,
+      name: getValue("userName"),
+      email: getValue("userEmail").toLowerCase(),
+      password: getValue("userPassword"),
+      role: getValue("userRole"),
+      permission: getValue("userPermission"),
       carrierId: carrierId,
       carrierName: carrier ? carrier.name : "",
-      status: document.getElementById("userStatus").value
+      status: getValue("userStatus"),
+      forcePasswordChange: getValue("forcePasswordChange") === "Yes",
+      createdAt: new Date().toISOString()
     };
 
     if (users.some(u => u.email === user.email)) {
@@ -44,11 +47,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+function getValue(id) {
+  const element = document.getElementById(id);
+  return element ? element.value.trim() : "";
+}
+
 function populateUserCarrierDropdown() {
   const dropdown = document.getElementById("userCarrier");
   if (!dropdown) return;
 
-  dropdown.innerHTML = `<option value="">Assign Carrier (optional)</option>`;
+  dropdown.innerHTML = `<option value="">Assign Carrier / Owner Operator</option>`;
 
   getCarriers().forEach(carrier => {
     dropdown.innerHTML += `<option value="${carrier.id}">${carrier.name}</option>`;
@@ -62,7 +70,7 @@ function renderUsers() {
   const users = getUsers();
 
   if (users.length === 0) {
-    table.innerHTML = `<tr><td colspan="6">No user accounts created.</td></tr>`;
+    table.innerHTML = `<tr><td colspan="8">No user accounts created.</td></tr>`;
     return;
   }
 
@@ -71,13 +79,31 @@ function renderUsers() {
       <td>${user.name}</td>
       <td>${user.email}</td>
       <td>${user.role}</td>
+      <td>${user.permission || "-"}</td>
       <td>${user.carrierName || "-"}</td>
       <td>${user.status}</td>
+      <td>${user.forcePasswordChange ? "Yes" : "No"}</td>
       <td>
-        <button class="small-btn danger" onclick="deleteUser(${index})">Delete</button>
+        <button class="small-btn" onclick="toggleUserStatus(${index})">
+          ${user.status === "Active" ? "Deactivate" : "Activate"}
+        </button>
+        <button class="small-btn danger" onclick="deleteUser(${index})">
+          Delete
+        </button>
       </td>
     </tr>
   `).join("");
+}
+
+function toggleUserStatus(index) {
+  const users = getUsers();
+
+  users[index].status = users[index].status === "Active" ? "Inactive" : "Active";
+
+  saveUsers(users);
+  renderUsers();
+
+  showNotification("User status updated.");
 }
 
 function deleteUser(index) {
@@ -85,8 +111,8 @@ function deleteUser(index) {
 
   const users = getUsers();
   users.splice(index, 1);
-  saveUsers(users);
 
+  saveUsers(users);
   renderUsers();
 
   showNotification("User deleted.", "#dc2626");
