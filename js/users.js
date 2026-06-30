@@ -1,4 +1,4 @@
-// GraniteSky Dispatch Center - Access Management Module
+// GraniteSky Dispatch Center - Firebase Access Management
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("userForm")) return;
@@ -7,78 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   populateUserCarrierDropdown();
   renderUsers();
 
-  const userForm = document.getElementById("userForm");
-
-  userForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const editId = document.getElementById("userEditId")?.value || "";
-    const users = getUsers();
-
-    const carrierId = getValue("userCarrier");
-    const carrier = getCarriers().find(c => c.id === carrierId);
-
-    const userData = {
-      name: getValue("userName"),
-      email: getValue("userEmail").toLowerCase(),
-      role: getValue("userRole"),
-      permission: getValue("userPermission"),
-      carrierId,
-      carrierName: carrier ? carrier.name : "",
-      status: getValue("userStatus"),
-      forcePasswordChange: getValue("forcePasswordChange") === "Yes"
-    };
-
-    const password = getValue("userPassword");
-
-    if (editId) {
-      const user = users.find(u => u.id === editId);
-      if (!user) return;
-
-      const emailUsed = users.some(u => u.email === userData.email && u.id !== editId);
-      if (emailUsed) {
-        alert("Another account already uses this email.");
-        return;
-      }
-
-      Object.assign(user, userData);
-
-      if (password) {
-        user.password = password;
-      }
-
-      saveUsers(users);
-      showNotification("User updated.");
-    } else {
-      if (!password) {
-        alert("Password is required for new users.");
-        return;
-      }
-
-      if (users.some(u => u.email === userData.email)) {
-        alert("An account with this email already exists.");
-        return;
-      }
-
-      users.unshift({
-        id: generateId("user"),
-        ...userData,
-        password,
-        createdAt: new Date().toISOString()
-      });
-
-      saveUsers(users);
-      showNotification("User account created.");
-    }
-
-    resetUserForm();
-    renderUsers();
-  });
+  document.getElementById("userForm").addEventListener("submit", handleUserSubmit);
 });
 
 function getValue(id) {
-  const element = document.getElementById(id);
-  return element ? element.value.trim() : "";
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
 }
 
 function populateUserCarrierDropdown() {
@@ -92,49 +26,116 @@ function populateUserCarrierDropdown() {
   });
 }
 
-function renderUsers() {
+async function handleUserSubmit(e) {
+  e.preventDefault();
+
+  const editId = getValue("userEditId");
+  const carrierId = getValue("userCarrier");
+  const carrier = getCarriers().find(c => c.id === carrierId);
+
+  const profile = {
+    name: getValue("userName"),
+    email: getValue("userEmail").toLowerCase(),
+    role: getValue("userRole"),
+    permission: getValue("userPermission"),
+    carrierId,
+    carrierName: carrier ? carrier.name : "",
+    status: getValue("userStatus"),
+    forcePasswordChange: getValue("forcePasswordChange") === "Yes",
+    updatedAt: new Date().toISOString()
+  };
+
+  const password = getValue("userPassword");
+
+  try {
+    if (editId) {
+      await gsDb.collection("users").doc(editId).set(profile, { merge: true });
+      showNotification("User profile updated.");
+    } else {
+      if (!password) {
+        alert("Password is required for new users.");
+        return;
+      }
+
+      const secondaryApp = firebase.initializeApp(window.firebaseConfig, "Secondary");
+      const secondaryAuth = secondaryApp.auth();
+
+      const credential = await secondaryAuth.createUserWithEmailAndPassword(profile.email, password);
+      const newUser = credential.user;
+
+      await newUser.updateProfile({
+        displayName: profile.name
+      });
+
+      await gsDb.collection("users").doc(newUser.uid).set({
+        ...profile,
+        uid: newUser.uid,
+        id: newUser.uid,
+        createdAt: new Date().toISOString()
+      });
+
+      await secondaryAuth.signOut();
+      await secondaryApp.delete();
+
+      showNotification("Firebase user account created.");
+    }
+
+    resetUserForm();
+    renderUsers();
+
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function renderUsers() {
   const table = document.getElementById("usersTable");
   if (!table) return;
 
-  const users = getUsers();
+  const snapshot = await gsDb.collection("users").orderBy("createdAt", "desc").get();
 
-  if (users.length === 0) {
+  if (snapshot.empty) {
     table.innerHTML = `<tr><td colspan="8">No user accounts created.</td></tr>`;
     return;
   }
 
-  table.innerHTML = users.map(user => `
-    <tr>
-      <td>${user.name}</td>
-      <td>${user.email}</td>
-      <td>${user.role}</td>
-      <td>${user.permission || "-"}</td>
-      <td>${user.carrierName || "-"}</td>
-      <td>${user.status}</td>
-      <td>${user.forcePasswordChange ? "Yes" : "No"}</td>
-      <td>
-        <div class="actions">
-          <button class="small-btn" onclick="editUser('${user.id}')">Edit</button>
-          <button class="small-btn" onclick="resetUserPassword('${user.id}')">Reset Password</button>
-          <button class="small-btn" onclick="toggleUserStatus('${user.id}')">
-            ${user.status === "Active" ? "Deactivate" : "Activate"}
-          </button>
-          <button class="small-btn danger" onclick="deleteUser('${user.id}')">Delete</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
+  table.innerHTML = snapshot.docs.map(doc => {
+    const user = doc.data();
+
+    return `
+      <tr>
+        <td>${user.name || "-"}</td>
+        <td>${user.email || "-"}</td>
+        <td>${user.role || "-"}</td>
+        <td>${user.permission || "-"}</td>
+        <td>${user.carrierName || "-"}</td>
+        <td>${user.status || "Active"}</td>
+        <td>${user.forcePasswordChange ? "Yes" : "No"}</td>
+        <td>
+          <div class="actions">
+            <button class="small-btn" onclick="editUser('${doc.id}')">Edit</button>
+            <button class="small-btn" onclick="toggleUserStatus('${doc.id}', '${user.status || "Active"}')">
+              ${(user.status || "Active") === "Active" ? "Deactivate" : "Activate"}
+            </button>
+            <button class="small-btn danger" onclick="deleteUserProfile('${doc.id}')">Delete Profile</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
 }
 
-function editUser(userId) {
-  const user = getUsers().find(u => u.id === userId);
-  if (!user) return;
+async function editUser(userId) {
+  const doc = await gsDb.collection("users").doc(userId).get();
+  if (!doc.exists) return;
 
-  document.getElementById("userEditId").value = user.id;
+  const user = doc.data();
+
+  document.getElementById("userEditId").value = userId;
   document.getElementById("userName").value = user.name || "";
   document.getElementById("userEmail").value = user.email || "";
   document.getElementById("userPassword").value = "";
-  document.getElementById("userPassword").placeholder = "Leave blank to keep current password";
+  document.getElementById("userPassword").placeholder = "Leave blank to keep password";
   document.getElementById("userRole").value = user.role || "Carrier";
   document.getElementById("userPermission").value = user.permission || "Carrier Portal Only";
   document.getElementById("userCarrier").value = user.carrierId || "";
@@ -143,49 +144,27 @@ function editUser(userId) {
 
   document.getElementById("userSubmitBtn").textContent = "Update Account";
   document.getElementById("cancelEditBtn").style.display = "inline-block";
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function resetUserPassword(userId) {
-  const newPassword = prompt("Enter new temporary password:");
-  if (!newPassword) return;
+async function toggleUserStatus(userId, currentStatus) {
+  const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
 
-  const users = getUsers();
-  const user = users.find(u => u.id === userId);
-  if (!user) return;
+  await gsDb.collection("users").doc(userId).set({
+    status: newStatus,
+    updatedAt: new Date().toISOString()
+  }, { merge: true });
 
-  user.password = newPassword;
-  user.forcePasswordChange = true;
-
-  saveUsers(users);
   renderUsers();
-
-  showNotification("Password reset.");
-}
-
-function toggleUserStatus(userId) {
-  const users = getUsers();
-  const user = users.find(u => u.id === userId);
-  if (!user) return;
-
-  user.status = user.status === "Active" ? "Inactive" : "Active";
-
-  saveUsers(users);
-  renderUsers();
-
   showNotification("User status updated.");
 }
 
-function deleteUser(userId) {
-  if (!confirmDelete("user account")) return;
+async function deleteUserProfile(userId) {
+  if (!confirm("Delete this user profile? This does not delete the Firebase Auth login.")) return;
 
-  const users = getUsers().filter(u => u.id !== userId);
-  saveUsers(users);
+  await gsDb.collection("users").doc(userId).delete();
 
   renderUsers();
-
-  showNotification("User deleted.", "#dc2626");
+  showNotification("User profile deleted.", "#dc2626");
 }
 
 function resetUserForm() {
