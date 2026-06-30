@@ -1,6 +1,6 @@
 // GraniteSky Dispatch Center - Firebase Setup
 
-const firebaseConfig = {
+window.firebaseConfig = {
   apiKey: "AIzaSyB0wyZSi3m-iOfev8t8UcnfwFcik3nZW4o",
   authDomain: "granitesky-dispatch-center.firebaseapp.com",
   projectId: "granitesky-dispatch-center",
@@ -10,7 +10,7 @@ const firebaseConfig = {
   measurementId: "G-6X2RLT7H1B"
 };
 
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(window.firebaseConfig);
 
 const gsAuth = firebase.auth();
 const gsDb = firebase.firestore();
