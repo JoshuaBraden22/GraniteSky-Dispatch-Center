@@ -1,35 +1,10 @@
-// GraniteSky Dispatch Center - Improved Authentication Module
-
-const defaultUsers = [
-  {
-    id: "default_admin",
-    name: "Joshua Braden",
-    email: "admin@granitesky.com",
-    password: "admin123",
-    role: "Admin",
-    carrierId: "",
-    carrierName: "",
-    status: "Active",
-    forcePasswordChange: false
-  }
-];
-
-function getAllLoginUsers() {
-  const savedUsers = typeof getUsers === "function" ? getUsers() : [];
-  return [...defaultUsers, ...savedUsers];
-}
+// GraniteSky Dispatch Center - Firebase Authentication Module
 
 function requireLogin() {
   const user = JSON.parse(localStorage.getItem("gsUser"));
 
   if (!user) {
-    window.location.href = "login.html?v=5000";
-    return null;
-  }
-
-  if (user.status === "Inactive") {
-    alert("This account is inactive.");
-    logout();
+    window.location.href = "login.html?v=7000";
     return null;
   }
 
@@ -37,8 +12,10 @@ function requireLogin() {
 }
 
 function logout() {
-  localStorage.removeItem("gsUser");
-  window.location.href = "login.html?v=5000";
+  gsAuth.signOut().finally(() => {
+    localStorage.removeItem("gsUser");
+    window.location.href = "login.html?v=7000";
+  });
 }
 
 function getCurrentUser() {
@@ -50,57 +27,69 @@ function showUserName() {
   const element = document.getElementById("loggedUser");
 
   if (user && element) {
-    element.textContent = user.name;
+    element.textContent = user.name || user.email;
   }
 }
 
 function routeUser(user) {
-  const role = String(user.role || "").toLowerCase();
+  const role = String(user.role || "Admin").toLowerCase();
 
-  if (user.forcePasswordChange) {
-    alert("Password change will be required in the production version.");
-  }
-
-  if (role === "admin" || role === "dispatcher") {
-    window.location.href = "dashboard.html?v=999";
+  if (role === "carrier" || role === "owner operator") {
+    window.location.href = "carrier-dashboard.html?v=7000";
     return;
   }
 
-  if (role === "carrier") {
-    window.location.href = "carrier-dashboard.html?v=5000";
-    return;
-  }
-
-  if (role === "owner operator") {
-    window.location.href = "carrier-dashboard.html?v=5000";
-    return;
-  }
-
-  window.location.href = "dashboard.html?v=999";
+  window.location.href = "dashboard.html?v=7000";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   if (!loginForm) return;
 
-  loginForm.addEventListener("submit", function (e) {
+  loginForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
 
-    const user = getAllLoginUsers().find(account =>
-      account.email === email &&
-      account.password === password &&
-      account.status !== "Inactive"
-    );
+    try {
+      const credential = await gsAuth.signInWithEmailAndPassword(email, password);
+      const firebaseUser = credential.user;
 
-    if (!user) {
-      alert("Invalid email, password, or inactive account.");
-      return;
+      let profile = {
+        id: firebaseUser.uid,
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName || email,
+        email: firebaseUser.email,
+        role: "Admin",
+        carrierId: "",
+        carrierName: "",
+        status: "Active"
+      };
+
+      const userDoc = await gsDb.collection("users").doc(firebaseUser.uid).get();
+
+      if (userDoc.exists) {
+        profile = {
+          ...profile,
+          ...userDoc.data(),
+          uid: firebaseUser.uid,
+          id: firebaseUser.uid,
+          email: firebaseUser.email
+        };
+      }
+
+      if (profile.status === "Inactive") {
+        alert("This account is inactive.");
+        await gsAuth.signOut();
+        return;
+      }
+
+      localStorage.setItem("gsUser", JSON.stringify(profile));
+      routeUser(profile);
+
+    } catch (error) {
+      alert(error.message);
     }
-
-    localStorage.setItem("gsUser", JSON.stringify(user));
-    routeUser(user);
   });
 });
