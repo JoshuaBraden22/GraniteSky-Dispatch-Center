@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,11 +8,15 @@
 
 <link rel="stylesheet" href="style.css">
 
-<script defer src="js/storage.js?v=6000"></script>
-<script defer src="js/auth.js?v=6000"></script>
-<script defer src="js/layout.js?v=6000"></script>
-<script defer src="js/users.js?v=6000"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
+<script defer src="js/firebase.js?v=8000"></script>
+<script defer src="js/storage.js?v=8000"></script>
+<script defer src="js/auth.js?v=8000"></script>
+<script defer src="js/layout.js?v=8000"></script>
+<script defer src="js/users.js?v=8000"></script>
 </head>
 
 <body>
@@ -22,283 +24,124 @@
 <div class="app-shell">
 
 <aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="GraniteSky Dispatch Center">
+  </div>
 
-<div class="sidebar-logo">
-<img src="logo.png" alt="GraniteSky Dispatch Center">
-</div>
-
-<nav class="sidebar-nav">
-
-<a href="dashboard.html?v=6000">Dashboard</a>
-<a href="loads.html?v=6000">Loads</a>
-<a href="dispatch-board.html?v=6000">Dispatch Board</a>
-<a href="drivers.html?v=6000">Drivers</a>
-<a href="trucks.html?v=6000">Trucks</a>
-<a href="companies.html?v=6000">Companies</a>
-<a href="carriers.html?v=6000">Carriers</a>
-<a href="documents.html?v=6000">Documents</a>
-<a href="calendar.html?v=6000">Calendar</a>
-<a href="messages.html?v=6000">Messages</a>
-<a href="accounting.html?v=6000">Accounting</a>
-
-<a href="users.html?v=6000" class="active">
-
-Access Management
-
-</a>
-
-<button onclick="logout()">
-
-Logout
-
-</button>
-
-</nav>
-
+  <nav class="sidebar-nav">
+    <a href="dashboard.html?v=8000">Dashboard</a>
+    <a href="loads.html?v=8000">Loads</a>
+    <a href="dispatch-board.html?v=8000">Dispatch Board</a>
+    <a href="drivers.html?v=8000">Drivers</a>
+    <a href="trucks.html?v=8000">Trucks</a>
+    <a href="companies.html?v=8000">Companies</a>
+    <a href="carriers.html?v=8000">Carriers</a>
+    <a href="documents.html?v=8000">Documents</a>
+    <a href="calendar.html?v=8000">Calendar</a>
+    <a href="messages.html?v=8000">Messages</a>
+    <a href="accounting.html?v=8000">Accounting</a>
+    <a href="users.html?v=8000" class="active">Access Management</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
 </aside>
 
 <main class="main-content">
 
-<div class="topbar">
-
-<div>
-
-<h1>Access Management</h1>
-
-<p>
-
-Manage employee, dispatcher, carrier and owner operator accounts.
-
-</p>
-
-</div>
-
-</div>
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>User Account</h2>
-
-</div>
-
-<form id="userForm" class="form-grid">
-
-<input
-type="hidden"
-id="userEditId">
-
-<input
-id="userName"
-placeholder="Full Name"
-required>
-
-<input
-id="userEmail"
-type="email"
-placeholder="Email Address"
-required>
-
-<input
-id="userPassword"
-type="password"
-placeholder="Temporary Password"
-required>
-
-<select id="userRole">
-
-<option>Admin</option>
-<option>Dispatcher</option>
-<option>Carrier</option>
-<option>Owner Operator</option>
-
-</select>
-
-<select id="userPermission">
-
-<option>Full Access</option>
-<option>Dispatch Only</option>
-<option>Accounting Only</option>
-<option>Carrier Portal Only</option>
-<option>View Only</option>
-
-</select>
-
-<select id="userCarrier">
-
-<option value="">
-
-Assign Carrier / Owner Operator
-
-</option>
-
-</select>
-
-<select id="userStatus">
-
-<option>Active</option>
-<option>Inactive</option>
-
-</select>
-
-<select id="forcePasswordChange">
-
-<option>No</option>
-<option>Yes</option>
-
-</select>
-
-<div class="actions">
-
-<button
-type="submit"
-class="btn-primary"
-id="userSubmitBtn">
-
-Create Account
-
-</button>
-
-<button
-type="button"
-class="small-btn"
-id="cancelEditBtn"
-onclick="resetUserForm()"
-style="display:none;">
-
-Cancel Edit
-
-</button>
-
-</div>
-
-</form>
-
-</section>
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>User Accounts</h2>
-
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Name</th>
-
-<th>Email</th>
-
-<th>Role</th>
-
-<th>Permission</th>
-
-<th>Carrier</th>
-
-<th>Status</th>
-
-<th>Password Reset</th>
-
-<th>Actions</th>
-
-</tr>
-
-</thead>
-
-<tbody id="usersTable">
-
-<tr>
-
-<td colspan="8">
-
-No user accounts created.
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>System Statistics</h2>
-
-</div>
-
-<div class="stat-grid">
-
-<div class="stat-card">
-
-<span>Total Users</span>
-
-<strong id="totalUsers">
-
-0
-
-</strong>
-
-</div>
-
-<div class="stat-card">
-
-<span>Dispatchers</span>
-
-<strong id="totalDispatchers">
-
-0
-
-</strong>
-
-</div>
-
-<div class="stat-card">
-
-<span>Carriers</span>
-
-<strong id="totalCarriers">
-
-0
-
-</strong>
-
-</div>
-
-<div class="stat-card">
-
-<span>Active Accounts</span>
-
-<strong id="totalActiveUsers">
-
-0
-
-</strong>
-
-</div>
-
-</div>
-
-</section>
+  <div class="topbar">
+    <div>
+      <h1>Access Management</h1>
+      <p>Manage employee, dispatcher, carrier and owner operator accounts.</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>User Account</h2>
+    </div>
+
+    <form id="userForm" class="form-grid">
+      <input type="hidden" id="userEditId">
+
+      <input id="userName" placeholder="Full Name" required>
+      <input id="userEmail" type="email" placeholder="Email Address" required>
+      <input id="userPassword" type="password" placeholder="Temporary Password" required>
+
+      <select id="userRole">
+        <option>Admin</option>
+        <option>Dispatcher</option>
+        <option>Carrier</option>
+        <option>Owner Operator</option>
+      </select>
+
+      <select id="userPermission">
+        <option>Full Access</option>
+        <option>Dispatch Only</option>
+        <option>Accounting Only</option>
+        <option>Carrier Portal Only</option>
+        <option>View Only</option>
+      </select>
+
+      <select id="userCarrier">
+        <option value="">Assign Carrier / Owner Operator</option>
+      </select>
+
+      <select id="userStatus">
+        <option>Active</option>
+        <option>Inactive</option>
+      </select>
+
+      <select id="forcePasswordChange">
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" id="userSubmitBtn">Create Account</button>
+
+        <button
+          type="button"
+          class="small-btn"
+          id="cancelEditBtn"
+          onclick="resetUserForm()"
+          style="display:none;">
+          Cancel Edit
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>User Accounts</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Permission</th>
+            <th>Carrier</th>
+            <th>Status</th>
+            <th>Password Reset</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="usersTable">
+          <tr>
+            <td colspan="8">No user accounts created.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
 </main>
 
 </div>
 
 </body>
-
 </html>
